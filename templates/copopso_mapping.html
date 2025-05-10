@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO-PO Mapping</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #1a1a2e;
+            --accent: #560bad;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #212529;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-header h1 i {
+            margin-right: 0.75rem;
+        }
+
+        .section {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--info);
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .section-header i {
+            margin-right: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        thead th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        tbody td {
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        input[type="number"] {
+            width: 50px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0.25rem;
+        }
+
+        .average-row {
+            background-color: #a7f3d0;
+            font-weight: bold;
+        }
+
+        .instructions {
+            margin-top: 1.5rem;
+            background-color: #e0f2fe;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--info);
+        }
+
+        .instructions h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .instructions ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                padding: 1rem;
+            }
+            
+            .section {
+                padding: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-bar"></i> CO-PO Mapping</h1>
+        </div>
+
+        <!-- Direct CO Attainment Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-check-circle"></i> Direct CO Attainment</h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="directAttainmentTable">
+                    <thead>
+                        <tr>
+                            <th>CO</th>
+                            <th>Attainment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be dynamically generated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CO-PO Mapping Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-project-diagram"></i> CO-PO mapping</h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="mappingTable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <!-- Column headers will be dynamically generated -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be dynamically generated -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> Instructions:</h3>
+                <ul>
+                    <li>Enter mapping values between 0 and 3 for each CO-PO pair</li>
+                    <li>The average for each column is calculated automatically</li>
+                    <li>The mapping values represent the strength of correlation between COs and POs</li>
+                    <li>0 = No correlation, 1 = Low, 2 = Medium, 3 = High</li>
+                </ul>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-save"></i> Save Mapping
+                </button>
+                <button class="btn btn-secondary" id="exportBtn">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get data from Flask template
+            const directAttainment = [
+                {% for row in final_attainment %}
+                    { 
+                        CO: "{{ row.CO }}", 
+                        'Final Attainment': {{ row['Final Attainment'] }} 
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ];
+            
+            // Mapping table columns
+            const columns = [
+                'PO1', 'PO 2', 'PO 3', 'PO 4', 'PO 5', 'PO 6', 'PO 7', 
+                'PO 8', 'PO 9', 'PO 10', 'PO 11', 'PO 12', 'PSO 1', 'PSO 12'
+            ];
+            
+            // Initialize the mapping matrix with zeros
+            let mappingMatrix = [];
+            for (let i = 0; i < directAttainment.length; i++) {
+                mappingMatrix.push(Array(columns.length).fill(0));
+            }
+            
+            // Populate Direct Attainment Table
+            const directAttainmentTable = document.getElementById('directAttainmentTable');
+            const directAttainmentTbody = directAttainmentTable.querySelector('tbody');
+            
+            directAttainment.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.CO}</td>
+                    <td>${item['Final Attainment']}</td>
+                `;
+                directAttainmentTbody.appendChild(row);
+            });
+            
+            // Create CO-PO Mapping Table
+            const mappingTable = document.getElementById('mappingTable');
+            const mappingTableHead = mappingTable.querySelector('thead tr');
+            const mappingTableBody = mappingTable.querySelector('tbody');
+            
+            // Add column headers
+            columns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column;
+                mappingTableHead.appendChild(th);
+            });
+            
+            // Add rows for each CO
+            directAttainment.forEach((item, rowIndex) => {
+                const row = document.createElement('tr');
+                
+                // First cell with CO name
+                const firstCell = document.createElement('td');
+                firstCell.textContent = item.CO;
+                firstCell.style.fontWeight = 'bold';
+                row.appendChild(firstCell);
+                
+                // Add input cells for each column
+                columns.forEach((_, colIndex) => {
+                    const cell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '0';
+                    input.max = '3';
+                    input.step = '1';
+                    input.value = mappingMatrix[rowIndex][colIndex];
+                    
+                    // Add event listener to update matrix on input change
+                    input.addEventListener('change', function() {
+                        const value = parseFloat(this.value) || 0;
+                        const validValue = Math.min(Math.max(value, 0), 3);
+                        this.value = validValue;
+                        
+                        // Update matrix value
+                        mappingMatrix[rowIndex][colIndex] = validValue;
+                        
+                        // Recalculate and update averages
+                        updateAverages();
+                    });
+                    
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                });
+                
+                mappingTableBody.appendChild(row);
+            });
+            
+            // Add average row
+            const averageRow = document.createElement('tr');
+            averageRow.classList.add('average-row');
+            
+            // First cell with "AVERAGE" label
+            const averageLabel = document.createElement('td');
+            averageLabel.textContent = 'AVERAGE';
+            averageLabel.style.fontWeight = 'bold';
+            averageRow.appendChild(averageLabel);
+            
+            // Add cells for each column average
+            columns.forEach((_, colIndex) => {
+                const cell = document.createElement('td');
+                cell.id = `average-${colIndex}`;
+                cell.textContent = '0.00';
+                averageRow.appendChild(cell);
+            });
+            
+            mappingTableBody.appendChild(averageRow);
+            
+            // Function to update averages
+            function updateAverages() {
+                columns.forEach((_, colIndex) => {
+                    let sum = 0;
+                    for (let rowIndex = 0; rowIndex < mappingMatrix.length; rowIndex++) {
+                        sum += mappingMatrix[rowIndex][colIndex];
+                    }
+                    
+                    const average = sum / mappingMatrix.length;
+                    document.getElementById(`average-${colIndex}`).textContent = average.toFixed(2);
+                });
+            }
+            
+            // Initialize averages
+            updateAverages();
+
+
+            // Button event listeners
+document.getElementById('saveBtn').addEventListener('click', function() {
+    // Create data structure for saving
+    let mappingData = {
+        co_po_mapping: [],
+        columns: columns
+    };
+    
+    // Prepare data for saving
+    directAttainment.forEach((item, rowIndex) => {
+        let rowData = {
+            CO: item.CO,
+            values: mappingMatrix[rowIndex]
+        };
+        mappingData.co_po_mapping.push(rowData);
+    });
+    
+    // Send data to server to save as Excel
+    fetch('/save-mapping', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            alert('Mapping data saved successfully!');
+        } else {
+            alert('Error saving mapping data: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error saving mapping data:', error);
+        alert('Error saving mapping data. Please check console for details.');
+    });
+    
+    // Clear any existing calculated sections
+    const existingCalculatedSections = document.querySelectorAll('.calculated-section');
+    existingCalculatedSections.forEach(section => section.remove());
+    
+    // 1. Create Direct Attainment * Mapping section
+    createDirectAttainmentMappingSection(directAttainment, mappingMatrix, columns);
+    
+    // 2. Create Indirect CO Attainment section
+    const indirectAttainment = createIndirectAttainmentSection(directAttainment);
+    
+    // 3. Create Indirect Attainment * Mapping section
+    createIndirectAttainmentMappingSection(directAttainment, mappingMatrix, columns);
+    
+    // 4. Create Overall Attainment Average section
+    createOverallAttainmentSection(directAttainment, mappingMatrix, columns);
+    
+    // 5. Create Final CO Attainment section (80% Direct + 20% Indirect)
+    createFinalCOAttainmentSection(directAttainment, indirectAttainment);
+    
+    // 6. Create bar graphs
+    createAttainmentGraphs(directAttainment, mappingMatrix, columns);
+    
+    // 7. Add Save & Go to Home button
+    addSaveAndGoHomeButton();
+});
+
+// Function to create Direct Attainment * Mapping section
+function createDirectAttainmentMappingSection(directAttainment, mappingMatrix, columns) {
+    const section = document.createElement('div');
+    section.className = 'section calculated-section';
+    
+    const sectionHeader = document.createElement('div');
+    sectionHeader.className = 'section-header';
+    sectionHeader.innerHTML = '<h2><i class="fas fa-calculator"></i> Direct CO Attainment * CO-PO Mapping (÷3)</h2>';
+    section.appendChild(sectionHeader);
+    
+    const tableResponsive = document.createElement('div');
+    tableResponsive.className = 'table-responsive';
+    
+    const table = document.createElement('table');
+    table.id = 'directMappingCalculationTable';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    // Empty first cell
+    const emptyHeader = document.createElement('th');
+    headerRow.appendChild(emptyHeader);
+    
+    // Add column headers
+    columns.forEach(column => {
+        const th = document.createElement('th');
+        th.textContent = column;
+        headerRow.appendChild(th);
+    });
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    
+    // Calculate and add row for each CO
+    directAttainment.forEach((item, rowIndex) => {
+        const row = document.createElement('tr');
+        
+        // First cell with CO name
+        const firstCell = document.createElement('td');
+        firstCell.textContent = item.CO;
+        firstCell.style.fontWeight = 'bold';
+        row.appendChild(firstCell);
+        
+        // Calculate and add cells for each column
+        columns.forEach((_, colIndex) => {
+            const cell = document.createElement('td');
+            const value = (item['Final Attainment'] * mappingMatrix[rowIndex][colIndex]) / 3;
+            cell.textContent = value.toFixed(2);
+            row.appendChild(cell);
+        });
+        
+        tbody.appendChild(row);
+    });
+    
+    // Add average row
+    const averageRow = document.createElement('tr');
+    averageRow.classList.add('average-row');
+    
+    // First cell with "AVERAGE" label
+    const averageLabel = document.createElement('td');
+    averageLabel.textContent = 'AVERAGE';
+    averageLabel.style.fontWeight = 'bold';
+    averageRow.appendChild(averageLabel);
+    
+    // Calculate and add average for each column
+    columns.forEach((_, colIndex) => {
+        let sum = 0;
+        for (let rowIndex = 0; rowIndex < directAttainment.length; rowIndex++) {
+            sum += (directAttainment[rowIndex]['Final Attainment'] * mappingMatrix[rowIndex][colIndex]) / 3;
+        }
+        
+        const average = sum / directAttainment.length;
+        const cell = document.createElement('td');
+        cell.textContent = average.toFixed(2);
+        averageRow.appendChild(cell);
+    });
+    
+    tbody.appendChild(averageRow);
+    table.appendChild(tbody);
+    
+    tableResponsive.appendChild(table);
+    section.appendChild(tableResponsive);
+    
+    // Add section to the container
+    document.querySelector('.container').appendChild(section);
+}
+
+// Function to create Indirect CO Attainment section
+function createIndirectAttainmentSection(directAttainment) {
+    const section = document.createElement('div');
+    section.className = 'section calculated-section';
+    
+    const sectionHeader = document.createElement('div');
+    sectionHeader.className = 'section-header';
+    sectionHeader.innerHTML = '<h2><i class="fas fa-chart-line"></i> Indirect CO Attainment</h2>';
+    section.appendChild(sectionHeader);
+    
+    const tableResponsive = document.createElement('div');
+    tableResponsive.className = 'table-responsive';
+    
+    const table = document.createElement('table');
+    table.id = 'indirectAttainmentTable';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    const coHeader = document.createElement('th');
+    coHeader.textContent = 'CO';
+    headerRow.appendChild(coHeader);
+    
+    const attainmentHeader = document.createElement('th');
+    attainmentHeader.textContent = 'Attainment';
+    headerRow.appendChild(attainmentHeader);
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    
+    // Add row for each CO with fixed attainment of 2.4
+    directAttainment.forEach(item => {
+        const row = document.createElement('tr');
+        
+        const coCell = document.createElement('td');
+        coCell.textContent = item.CO;
+        row.appendChild(coCell);
+        
+        const attainmentCell = document.createElement('td');
+        attainmentCell.textContent = '2.4';
+        row.appendChild(attainmentCell);
+        
+        tbody.appendChild(row);
+    });
+    
+    table.appendChild(tbody);
+    tableResponsive.appendChild(table);
+    section.appendChild(tableResponsive);
+    
+    // Add section to the container
+    document.querySelector('.container').appendChild(section);
+    
+    // Return the indirect attainment data for use in other functions
+    return directAttainment.map(item => ({ CO: item.CO, 'Indirect Attainment': 2.4 }));
+}
+
+// Function to create Indirect Attainment * Mapping section
+function createIndirectAttainmentMappingSection(directAttainment, mappingMatrix, columns) {
+    const section = document.createElement('div');
+    section.className = 'section calculated-section';
+    
+    const sectionHeader = document.createElement('div');
+    sectionHeader.className = 'section-header';
+    sectionHeader.innerHTML = '<h2><i class="fas fa-calculator"></i> Indirect CO Attainment * CO-PO Mapping (÷3)</h2>';
+    section.appendChild(sectionHeader);
+    
+    const tableResponsive = document.createElement('div');
+    tableResponsive.className = 'table-responsive';
+    
+    const table = document.createElement('table');
+    table.id = 'indirectMappingCalculationTable';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    // Empty first cell
+    const emptyHeader = document.createElement('th');
+    headerRow.appendChild(emptyHeader);
+    
+    // Add column headers
+    columns.forEach(column => {
+        const th = document.createElement('th');
+        th.textContent = column;
+        headerRow.appendChild(th);
+    });
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    
+    // Fixed indirect attainment value
+    const indirectAttainmentValue = 2.4;
+    
+    // Calculate and add row for each CO
+    directAttainment.forEach((item, rowIndex) => {
+        const row = document.createElement('tr');
+        
+        // First cell with CO name
+        const firstCell = document.createElement('td');
+        firstCell.textContent = item.CO;
+        firstCell.style.fontWeight = 'bold';
+        row.appendChild(firstCell);
+        
+        // Calculate and add cells for each column
+        columns.forEach((_, colIndex) => {
+            const cell = document.createElement('td');
+            const value = (indirectAttainmentValue * mappingMatrix[rowIndex][colIndex]) / 3;
+            cell.textContent = value.toFixed(2);
+            row.appendChild(cell);
+        });
+        
+        tbody.appendChild(row);
+    });
+    
+    // Add average row
+    const averageRow = document.createElement('tr');
+    averageRow.classList.add('average-row');
+    
+    // First cell with "AVERAGE" label
+    const averageLabel = document.createElement('td');
+    averageLabel.textContent = 'AVERAGE';
+    averageLabel.style.fontWeight = 'bold';
+    averageRow.appendChild(averageLabel);
+    
+    // Calculate and add average for each column
+    columns.forEach((_, colIndex) => {
+        let sum = 0;
+        for (let rowIndex = 0; rowIndex < directAttainment.length; rowIndex++) {
+            sum += (indirectAttainmentValue * mappingMatrix[rowIndex][colIndex]) / 3;
+        }
+        
+        const average = sum / directAttainment.length;
+        const cell = document.createElement('td');
+        cell.textContent = average.toFixed(2);
+        averageRow.appendChild(cell);
+    });
+    
+    tbody.appendChild(averageRow);
+    table.appendChild(tbody);
+    
+    tableResponsive.appendChild(table);
+    section.appendChild(tableResponsive);
+    
+    // Add section to the container
+    document.querySelector('.container').appendChild(section);
+}
+
+// Function to create Overall Attainment Average section
+// Function to create Overall Attainment Average section
+function createOverallAttainmentSection(directAttainment, mappingMatrix, columns) {
+    const section = document.createElement('div');
+    section.className = 'section calculated-section';
+    
+    const sectionHeader = document.createElement('div');
+    sectionHeader.className = 'section-header';
+    sectionHeader.innerHTML = '<h2><i class="fas fa-chart-bar"></i> Overall Attainment Average</h2>';
+    section.appendChild(sectionHeader);
+    
+    const tableResponsive = document.createElement('div');
+    tableResponsive.className = 'table-responsive';
+    
+    const table = document.createElement('table');
+    table.id = 'overallAttainmentTable';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    // Empty first cell
+    const emptyHeader = document.createElement('th');
+    headerRow.appendChild(emptyHeader);
+    
+    // Add column headers
+    columns.forEach(column => {
+        const th = document.createElement('th');
+        th.textContent = column;
+        headerRow.appendChild(th);
+    });
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    
+    // Fixed indirect attainment value
+    const indirectAttainmentValue = 2.4;
+    
+    // Calculate direct attainment averages for each PO/PSO
+    const directAverages = columns.map((_, colIndex) => {
+        let sum = 0;
+        for (let rowIndex = 0; rowIndex < directAttainment.length; rowIndex++) {
+            sum += (directAttainment[rowIndex]['Final Attainment'] * mappingMatrix[rowIndex][colIndex]) / 3;
+        }
+        return sum / directAttainment.length;
+    });
+    
+    // Calculate indirect attainment averages for each PO/PSO
+    const indirectAverages = columns.map((_, colIndex) => {
+        let sum = 0;
+        for (let rowIndex = 0; rowIndex < directAttainment.length; rowIndex++) {
+            sum += (indirectAttainmentValue * mappingMatrix[rowIndex][colIndex]) / 3;
+        }
+        return sum / directAttainment.length;
+    });
+    
+    // Create Overall Attainment Average row
+    const overallRow = document.createElement('tr');
+    
+    // First cell with label
+    const overallLabel = document.createElement('td');
+    overallLabel.textContent = 'Overall Attainment Average';
+    overallLabel.style.fontWeight = 'bold';
+    overallRow.appendChild(overallLabel);
+    
+    // Calculate and add overall attainment for each column
+    columns.forEach((_, colIndex) => {
+        const cell = document.createElement('td');
+        // Formula: 0.8 * Direct + 0.2 * Indirect
+        const overallValue = (0.8 * directAverages[colIndex]) + (0.2 * indirectAverages[colIndex]);
+        cell.textContent = overallValue.toFixed(2);
+        cell.setAttribute('data-overall-value', overallValue.toFixed(2));
+        overallRow.appendChild(cell);
+    });
+    
+    tbody.appendChild(overallRow);
+    
+    // Create Target % row with a single input field in the row header
+    const targetRow = document.createElement('tr');
+    
+    // First cell with label and input field
+    const targetLabel = document.createElement('td');
+    targetLabel.style.fontWeight = 'bold';
+    
+    // Create container div for label and input
+    const labelContainer = document.createElement('div');
+    labelContainer.style.display = 'flex';
+    labelContainer.style.alignItems = 'center';
+    labelContainer.style.gap = '8px';
+    
+    // Add text label
+    const labelText = document.createElement('span');
+    labelText.textContent = 'Target %';
+    labelContainer.appendChild(labelText);
+    
+    // Add input field
+    const targetInput = document.createElement('input');
+    targetInput.type = 'number';
+    targetInput.min = '0';
+    targetInput.max = '100';
+    targetInput.value = '70'; // Default value
+    targetInput.style.width = '50px';
+    targetInput.style.marginLeft = '8px';
+    labelContainer.appendChild(targetInput);
+    
+    targetLabel.appendChild(labelContainer);
+    targetRow.appendChild(targetLabel);
+    
+    // Add calculation cells for each column
+    columns.forEach((_, colIndex) => {
+        const cell = document.createElement('td');
+        const overallValue = parseFloat(overallRow.children[colIndex + 1].getAttribute('data-overall-value'));
+        const targetValue = 0.7 * overallValue; // Default 70%
+        
+        // Create span to display calculated target value
+        const displaySpan = document.createElement('span');
+        displaySpan.textContent = targetValue.toFixed(2);
+        displaySpan.setAttribute('data-column-index', colIndex);
+        cell.appendChild(displaySpan);
+        
+        targetRow.appendChild(cell);
+    });
+    
+    // Add event listener to the single target input
+    targetInput.addEventListener('input', function() {
+        const targetPercentage = parseFloat(this.value) / 100 || 0;
+        
+        // Update all target values in the row
+        for (let colIndex = 0; colIndex < columns.length; colIndex++) {
+            const overallValue = parseFloat(overallRow.children[colIndex + 1].getAttribute('data-overall-value'));
+            const targetValue = targetPercentage * overallValue;
+            
+            // Get the span in the corresponding cell and update it
+            const displaySpan = targetRow.children[colIndex + 1].querySelector('span');
+            displaySpan.textContent = targetValue.toFixed(2);
+        }
+    });
+    
+    tbody.appendChild(targetRow);
+    table.appendChild(tbody);
+    
+    tableResponsive.appendChild(table);
+    section.appendChild(tableResponsive);
+    
+    // Add section to the container
+    document.querySelector('.container').appendChild(section);
+}
+            
+// Function to create Final CO Attainment section (80% Direct + 20% Indirect)
+function createFinalCOAttainmentSection(directAttainment, indirectAttainment) {
+    const section = document.createElement('div');
+    section.className = 'section calculated-section';
+    
+    const sectionHeader = document.createElement('div');
+    sectionHeader.className = 'section-header';
+    sectionHeader.innerHTML = '<h2><i class="fas fa-calculator"></i> Final CO Attainment (80% Direct + 20% Indirect)</h2>';
+    section.appendChild(sectionHeader);
+    
+    const tableResponsive = document.createElement('div');
+    tableResponsive.className = 'table-responsive';
+    
+    const table = document.createElement('table');
+    table.id = 'finalCOAttainmentTable';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    const coHeader = document.createElement('th');
+    coHeader.textContent = 'CO';
+    headerRow.appendChild(coHeader);
+    
+    const attainmentHeader = document.createElement('th');
+    attainmentHeader.textContent = 'Attainment';
+    headerRow.appendChild(attainmentHeader);
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    
+    // Fixed indirect attainment value
+    const indirectAttainmentValue = 2.4;
+    
+    // Calculate and add row for each CO
+    directAttainment.forEach((item, index) => {
+        const row = document.createElement('tr');
+        
+        // First cell with CO name
+        const coCell = document.createElement('td');
+        coCell.textContent = item.CO;
+        row.appendChild(coCell);
+        
+        // Calculate final attainment: 80% Direct + 20% Indirect
+        const attainmentCell = document.createElement('td');
+        const finalAttainment = (0.8 * item['Final Attainment']) + (0.2 * indirectAttainmentValue);
+        attainmentCell.textContent = finalAttainment.toFixed(2);
+        attainmentCell.setAttribute('data-final-attainment', finalAttainment.toFixed(2));
+        row.appendChild(attainmentCell);
+        
+        tbody.appendChild(row);
+    });
+    
+    table.appendChild(tbody);
+    tableResponsive.appendChild(table);
+    section.appendChild(tableResponsive);
+    
+    // Add section to the container
+    document.querySelector('.container').appendChild(section);
+    
+    // Return the final attainment data for use in other functions
+    return directAttainment.map((item, index) => ({ 
+        CO: item.CO, 
+        'Final Attainment': parseFloat((0.8 * item['Final Attainment'] + 0.2 * indirectAttainmentValue).toFixed(2)) 
+    }));
+}
+
+// Function to add Save & Go to Home button
+function addSaveAndGoHomeButton() {
+    // Check if button already exists
+    if (document.getElementById('saveAndGoHomeBtn')) {
+        return;
+    }
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'section calculated-section button-container';
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.justifyContent = 'center';
+    buttonContainer.style.marginTop = '2rem';
+    
+    const button = document.createElement('button');
+    button.id = 'saveAndGoHomeBtn';
+    button.className = 'btn btn-primary';
+    button.innerHTML = '<i class="fas fa-save"></i> Save & Go to Home';
+    button.style.fontSize = '1.2rem';
+    button.style.padding = '1rem 2rem';
+    
+    button.addEventListener('click', function() {
+        // Gather all data to save
+        const allData = {
+            mappingMatrix: mappingMatrix,
+            directAttainment: directAttainment,
+            calculatedData: {
+                directMappingData: extractTableData('directMappingCalculationTable'),
+                indirectAttainmentData: extractTableData('indirectAttainmentTable'),
+                indirectMappingData: extractTableData('indirectMappingCalculationTable'),
+                overallAttainmentData: extractTableData('overallAttainmentTable'),
+                finalCOAttainmentData: extractTableData('finalCOAttainmentTable')
+            }
+        };
+        
+        // Send data to server
+        fetch('/save-all-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(allData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert('All data saved successfully!');
+                window.location.href = '/'; // Redirect to home
+            } else {
+                alert('Error saving data: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error saving data:', error);
+            alert('Error saving data. Please check console for details.');
+        });
+    });
+    
+    buttonContainer.appendChild(button);
+    document.querySelector('.container').appendChild(buttonContainer);
+}
+
+// Helper function to extract data from tables
+function extractTableData(tableId) {
+    const table = document.getElementById(tableId);
+    if (!table) return null;
+    
+    const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent);
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+    
+    return rows.map(row => {
+        const cells = Array.from(row.querySelectorAll('td'));
+        const rowData = {};
+        
+        cells.forEach((cell, index) => {
+            if (headers[index]) {
+                rowData[headers[index]] = cell.textContent;
+            } else if (index === 0) {
+                rowData['Label'] = cell.textContent;
+            }
+        });
+        
+        return rowData;
+    });
+}
+
+// Function to create attainment graphs
+function createAttainmentGraphs(directAttainment, mappingMatrix, columns) {
+    // Create container for graphs
+    const graphsSection = document.createElement('div');
+    graphsSection.className = 'section calculated-section';
+    
+    const sectionHeader = document.createElement('div');
+    sectionHeader.className = 'section-header';
+    sectionHeader.innerHTML = '<h2><i class="fas fa-chart-bar"></i> Attainment Visualizations</h2>';
+    graphsSection.appendChild(sectionHeader);
+    
+    // Create container for two charts
+    const chartsContainer = document.createElement('div');
+    chartsContainer.style.display = 'flex';
+    chartsContainer.style.flexDirection = 'column';
+    chartsContainer.style.gap = '2rem';
+    
+    // 1. Create Final CO Attainment Chart
+    const finalCOChartContainer = document.createElement('div');
+    finalCOChartContainer.style.height = '400px';
+    
+    const finalCOCanvas = document.createElement('canvas');
+    finalCOCanvas.id = 'finalCOAttainmentChart';
+    finalCOChartContainer.appendChild(finalCOCanvas);
+    
+    // 2. Create Overall PO-PSO Attainment Chart
+    const overallPOChartContainer = document.createElement('div');
+    overallPOChartContainer.style.height = '400px';
+    
+    const overallPOCanvas = document.createElement('canvas');
+    overallPOCanvas.id = 'overallPOAttainmentChart';
+    overallPOChartContainer.appendChild(overallPOCanvas);
+    
+    // Add charts to container
+    chartsContainer.appendChild(finalCOChartContainer);
+    chartsContainer.appendChild(overallPOChartContainer);
+    graphsSection.appendChild(chartsContainer);
+    
+    // Add to page
+    document.querySelector('.container').appendChild(graphsSection);
+    
+    // Wait for DOM to update
+    setTimeout(() => {
+        // Create Final CO Attainment Chart
+        createFinalCOAttainmentChart(directAttainment);
+        
+        // Create Overall PO-PSO Attainment Chart
+        createOverallPOAttainmentChart(columns);
+    }, 100);
+}
+
+function createFinalCOAttainmentChart(directAttainment) {
+    const ctx = document.getElementById('finalCOAttainmentChart').getContext('2d');
+    
+    // Get data from the Final CO Attainment table
+    const finalCOTable = document.getElementById('finalCOAttainmentTable');
+    if (!finalCOTable) return;
+    
+    const rows = Array.from(finalCOTable.querySelectorAll('tbody tr'));
+    const labels = rows.map(row => row.cells[0].textContent); // CO names
+    const data = rows.map(row => parseFloat(row.cells[1].textContent)); // Attainment values
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Final CO Attainment',
+                data: data,
+                backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                borderColor: 'rgba(67, 97, 238, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Final CO Attainment (80% Direct + 20% Indirect)',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 3,
+                    title: {
+                        display: true,
+                        text: 'Attainment Level'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Course Outcomes'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createOverallPOAttainmentChart(columns) {
+    const ctx = document.getElementById('overallPOAttainmentChart').getContext('2d');
+    
+    // Get data from the Overall Attainment Average table
+    const overallTable = document.getElementById('overallAttainmentTable');
+    if (!overallTable) return;
+    
+    const overallRow = overallTable.querySelector('tbody tr');
+    if (!overallRow) return;
+    
+    // Extract data (skip first cell which is the label)
+    const data = Array.from(overallRow.cells).slice(1).map(cell => parseFloat(cell.textContent));
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: columns,
+            datasets: [{
+                label: 'Overall PO-PSO Attainment',
+                data: data,
+                backgroundColor: 'rgba(76, 201, 240, 0.7)',
+                borderColor: 'rgba(76, 201, 240, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Overall PO-PSO Attainment',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Attainment Level'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Program Outcomes & Program Specific Outcomes'
+                    }
+                }
+            }
+        }
+    });
+}
+            
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                // Simple export to CSV
+                let csvContent = 'data:text/csv;charset=utf-8,';
+                
+                // Add header row
+                csvContent += ',' + columns.join(',') + '\n';
+                
+                // Add data rows
+                directAttainment.forEach((item, rowIndex) => {
+                    csvContent += item.CO + ',' + mappingMatrix[rowIndex].join(',') + '\n';
+                });
+                
+                // Add average row
+                const averages = columns.map((_, colIndex) => {
+                    let sum = 0;
+                    for (let rowIndex = 0; rowIndex < mappingMatrix.length; rowIndex++) {
+                        sum += mappingMatrix[rowIndex][colIndex];
+                    }
+                    return (sum / mappingMatrix.length).toFixed(2);
+                });
+                
+                csvContent += 'AVERAGE,' + averages.join(',') + '\n';
+                
+                // Create download link
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement('a');
+                link.setAttribute('href', encodedUri);
+                link.setAttribute('download', 'CO_PO_Mapping.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        });
+    </script>
+    
+</body>
+</html>

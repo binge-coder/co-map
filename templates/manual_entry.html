@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if exam == 'final' %}Final Exam Manual Entry{% else %}{{ exam|capitalize }} Manual Entry{% endif %} </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1e1e1e;
+            --card-bg: #252525;
+            --border-color: #444;
+            --text-color: #e0e0e0;
+            --accent-color: #3a86ff;
+            --success-color: #38b000;
+            --warning-color: #ffbe0b;
+            --danger-color: #d90429;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background-color: var(--secondary-bg);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.5rem;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background-color: var(--card-bg);
+            color: #fff;
+            border-color: var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+            padding: 1rem 0.75rem;
+        }
+        
+        .table tbody td {
+            vertical-align: middle;
+            border-color: var(--border-color);
+            padding: 0.75rem;
+        }
+        
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
+        }
+        
+        .mark-input {
+            text-align: center;
+            width: 60px;
+        }
+        
+        .roll-input {
+            width: 90px;
+        }
+        
+        .total-input {
+            width: 70px;
+            text-align: center;
+            font-weight: bold;
+            background-color: rgba(58, 134, 255, 0.1) !important;
+        }
+        
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2a75ed;
+            border-color: #2a75ed;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(58, 134, 255, 0.25);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .btn-add {
+            border-style: dashed;
+            border-width: 2px;
+            background-color: transparent;
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+        
+        .btn-add:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+        
+        .action-buttons {
+            gap: 8px;
+        }
+        
+        .remove-row {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            padding: 0;
+        }
+        
+        .remove-row:hover {
+            transform: scale(1.1);
+        }
+        
+        .name-input {
+            min-width: 200px;
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+        
+        .stats-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .stats-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .highlight-row {
+            background-color: rgba(58, 134, 255, 0.05);
+        }
+        
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .new-row {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid page-container py-4">
+        <div class="card shadow-lg mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-info m-0 d-flex align-items-center">
+                        <i class="fas fa-clipboard-list me-3"></i>
+                        <span>{% if exam == 'final' %}Final Exam Manual Entry{% else %}{{ exam|capitalize }} Manual Entry{% endif %}</span>
+                    </h2>
+                    <p class="text-muted mt-2 mb-0">Enter student marks for each question</p>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-info me-2">
+                        <i class="fas fa-calendar-alt me-1"></i> {{ now.strftime('%B %d, %Y') }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <form id="marksEntryForm" method="POST">
+                    <input type="hidden" name="row_count" id="row_count" value="5">
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stats-card mb-3">
+                                <div class="stats-value" id="studentCount">5</div>
+                                <div class="stats-label">Students</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card mb-3">
+                                <div class="stats-value" id="avgMarks">0</div>
+                                <div class="stats-label">Average Score</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card mb-3">
+                                <div class="stats-value" id="highestMark">0</div>
+                                <div class="stats-label">Highest Score</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card mb-3">
+                                <div class="stats-value" id="lowestMark">0</div>
+                                <div class="stats-label">Lowest Score</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container mb-4">
+                        <table class="table table-bordered table-dark" id="entryTable">
+                            <thead>
+                                <tr>
+                                    <th>Student's Name</th>
+                                    <th>Roll No</th>
+                                    <th>Q1</th>
+                                    <th>Q2</th>
+                                    <th>Q3</th>
+                                    <th>Q4</th>
+                                    <th>Q5</th>
+                                    <th>Q6</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in range(1, 6) %}
+                                <tr>
+                                    <td><input type="text" name="name_{{ i }}" class="form-control name-input" placeholder="Student Name" required></td>
+                                    <td><input type="text" name="roll_{{ i }}" class="form-control roll-input" placeholder="Roll No" required></td>
+                                    <td><input type="number" name="q1_{{ i }}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                                    <td><input type="number" name="q2_{{ i }}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                                    <td><input type="number" name="q3_{{ i }}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                                    <td><input type="number" name="q4_{{ i }}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                                    <td><input type="number" name="q5_{{ i }}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                                    <td><input type="number" name="q6_{{ i }}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                                    <td><input type="number" name="total_{{ i }}" class="form-control total-input" readonly></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm remove-row" title="Remove this row">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <button type="button" class="btn btn-add mb-3" id="addRow">
+                            <i class="fas fa-plus me-2"></i>Add Student
+                        </button>
+                        
+                        <div class="d-flex action-buttons">
+                            <a href="/" class="btn btn-outline-light mb-3">
+                                <i class="fas fa-arrow-left me-2"></i>Back
+                            </a>
+                            <button type="button" class="btn btn-outline-warning mb-3" id="clearForm">
+                                <i class="fas fa-eraser me-2"></i>Clear Form
+                            </button>
+                            <button type="submit" name="action" value="preview" class="btn btn-primary mb-3">
+                                <i class="fas fa-eye me-2"></i>Preview Data
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add new row
+            $("#addRow").click(function() {
+                const rowCount = parseInt($("#row_count").val()) + 1;
+                $("#row_count").val(rowCount);
+                
+                const newRow = `
+                    <tr class="new-row">
+                        <td><input type="text" name="name_${rowCount}" class="form-control name-input" placeholder="Student Name" required></td>
+                        <td><input type="text" name="roll_${rowCount}" class="form-control roll-input" placeholder="Roll No" required></td>
+                        <td><input type="number" name="q1_${rowCount}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" name="q2_${rowCount}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" name="q3_${rowCount}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" name="q4_${rowCount}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" name="q5_${rowCount}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" name="q6_${rowCount}" class="form-control mark-input mark-field" min="0" max="100" placeholder="0"></td>
+                        <td><input type="number" name="total_${rowCount}" class="form-control total-input" readonly></td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-row" title="Remove this row">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                
+                $("#entryTable tbody").append(newRow);
+                updateStats();
+            });
+            
+            // Remove row
+            $(document).on("click", ".remove-row", function() {
+                if ($("#entryTable tbody tr").length > 1) {
+                    $(this).closest("tr").remove();
+                    updateStats();
+                } else {
+                    alert("At least one student entry is required.");
+                }
+            });
+            
+            // Calculate total for each row when marks are entered
+            $(document).on("input", ".mark-field", function() {
+                const row = $(this).closest("tr");
+                let total = 0;
+                
+                row.find(".mark-field").each(function() {
+                    const val = parseInt($(this).val()) || 0;
+                    total += val;
+                });
+                
+                row.find(".total-input").val(total);
+                updateStats();
+                
+                // Highlight rows with good scores
+                if (total > 80) {
+                    row.addClass("highlight-row");
+                } else {
+                    row.removeClass("highlight-row");
+                }
+            });
+            
+            // Clear form
+            $("#clearForm").click(function() {
+                if (confirm("Are you sure you want to clear all entries?")) {
+                    $("#entryTable tbody tr").each(function() {
+                        $(this).find("input").val("");
+                    });
+                    updateStats();
+                }
+            });
+            
+            // Update statistics
+            function updateStats() {
+                const studentCount = $("#entryTable tbody tr").length;
+                $("#studentCount").text(studentCount);
+                
+                let totalMarks = 0;
+                let highestMark = 0;
+                let lowestMark = Infinity;
+                let validEntries = 0;
+                
+                $("#entryTable tbody tr").each(function() {
+                    const total = parseInt($(this).find(".total-input").val()) || 0;
+                    
+                    if (total > 0) {
+                        totalMarks += total;
+                        validEntries++;
+                        
+                        if (total > highestMark) {
+                            highestMark = total;
+                        }
+                        
+                        if (total < lowestMark) {
+                            lowestMark = total;
+                        }
+                    }
+                });
+                
+                const avgMarks = validEntries > 0 ? Math.round(totalMarks / validEntries) : 0;
+                
+                $("#avgMarks").text(avgMarks);
+                $("#highestMark").text(validEntries > 0 ? highestMark : 0);
+                $("#lowestMark").text(validEntries > 0 && lowestMark !== Infinity ? lowestMark : 0);
+            }
+            
+            // Form validation
+            $("#marksEntryForm").on("submit", function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                $(this).addClass("was-validated");
+            });
+            
+            // Initialize statistics
+            updateStats();
+        });
+    </script>
+</body>
+</html>

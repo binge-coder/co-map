@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam Data Entry</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-dark text-white">
+    <div class="container py-5">
+        <h1 class="text-info fw-bold mb-4">Enter Minor-1 Exam Data</h1>
+
+        <div class="card bg-secondary text-white shadow-sm p-4">
+            <h4 class="mb-3">Minor-1 Entry</h4>
+            <div class="d-grid gap-3">
+                <a href="/minor1/manual" class="btn btn-outline-light">Manual Entry</a>
+                <form method="POST" action="/minor1/upload" enctype="multipart/form-data">
+                    <div class="mb-2">
+                        <input type="file" name="file" accept=".xlsx,.xls" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Upload Excel File</button>
+                </form>
+            </div>
+        </div>
+
+        {% if minor1_done %}
+        <hr class="my-4">
+        <h1 class="text-info fw-bold mb-4">Enter Minor-2 Exam Data</h1>
+        <div class="card bg-secondary text-white shadow-sm p-4">
+            <h4 class="mb-3">Minor-2 Entry</h4>
+            <div class="d-grid gap-3">
+                <a href="/minor2/manual" class="btn btn-outline-light">Manual Entry</a>
+                <form method="POST" action="/minor2/upload" enctype="multipart/form-data">
+                    <div class="mb-2">
+                        <input type="file" name="file" accept=".xlsx,.xls" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Upload Excel File</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

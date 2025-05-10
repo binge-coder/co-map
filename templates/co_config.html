@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CO Attainment Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #1abc9c;
+            --light-bg: #f8f9fa;
+            --dark-text: #343a40;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 1rem 1.5rem;
+        }
+        
+        .table th {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #16a085;
+            border-color: #16a085;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .page-header {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .help-tooltip {
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        .setup-section {
+            background-color: #fff;
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .level-settings {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <h2 class="fw-bold"><i class="fas fa-cogs me-2"></i>Course Outcome Attainment Configuration</h2>
+            <span class="badge bg-primary">Academic Year 2024-25</span>
+        </div>
+        
+        <!-- Setup Section -->
+        <div class="setup-section">
+            <h5 class="mb-3"><i class="fas fa-sliders-h me-2"></i>Setup Configuration</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="coCount" class="form-label">Select Number of Course Outcomes:</label>
+                    <select id="coCount" class="form-select" onchange="generateCORows()">
+                        <option value="">-- Select --</option>
+                        <option value="1">1 CO</option>
+                        <option value="2">2 COs</option>
+                        <option value="3">3 COs</option>
+                        <option value="4">4 COs</option>
+                        <option value="5">5 COs</option>
+                        <option value="6">6 COs</option>
+                        <option value="7">7 COs</option>
+                        <option value="8">8 COs</option>
+                        <option value="9">9 COs</option>
+                        <option value="10">10 COs</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="defaultThreshold" class="form-label">Default Threshold Value (%):</label>
+                    <div class="input-group">
+                        <input type="number" id="defaultThreshold" class="form-control" value="40" min="0" max="100">
+                        <button class="btn btn-outline-secondary" type="button" onclick="applyDefaultThreshold()">Apply to All</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Default Level Ranges -->
+            <div class="level-settings mt-3">
+                <h6 class="mb-3"><i class="fas fa-layer-group me-2"></i>Default Attainment Criteria Levels:</h6>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="defaultLevel1" class="form-label">Level 1 Range:</label>
+                        <div class="input-group">
+                            <input type="text" id="defaultLevel1" class="form-control" value="40-60" placeholder="40-60" pattern="\d+-\d+">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="defaultLevel2" class="form-label">Level 2 Range:</label>
+                        <div class="input-group">
+                            <input type="text" id="defaultLevel2" class="form-control" value="61-80" placeholder="61-80" pattern="\d+-\d+">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="defaultLevel3" class="form-label">Level 3 Range:</label>
+                        <div class="input-group">
+                            <input type="text" id="defaultLevel3" class="form-control" value="81-100" placeholder="81-100" pattern="\d+-\d+">
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button class="btn btn-primary" type="button" onclick="applyDefaultLevels()">
+                        <i class="fas fa-check-circle me-1"></i> Apply Levels to All COs
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>CO Attainment Criteria</h5>
+                <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#helpModal">
+                    <i class="fas fa-question-circle"></i> Help
+                </button>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    <input type="hidden" name="co_count" id="co_count_input">
+              
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="configTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 15%">Course Outcome <i class="fas fa-info-circle help-tooltip ms-1" data-bs-toggle="tooltip" title="CO identifier"></i></th>
+                                    <th style="width: 20%">Threshold (%) <i class="fas fa-info-circle help-tooltip ms-1" data-bs-toggle="tooltip" title="Minimum percentage required for attainment"></i></th>
+                                    <th style="width: 20%">Level 1 Range <i class="fas fa-info-circle help-tooltip ms-1" data-bs-toggle="tooltip" title="Format: min-max (e.g., 40-60)"></i></th>
+                                    <th style="width: 20%">Level 2 Range <i class="fas fa-info-circle help-tooltip ms-1" data-bs-toggle="tooltip" title="Format: min-max (e.g., 61-80)"></i></th>
+                                    <th style="width: 20%">Level 3 Range <i class="fas fa-info-circle help-tooltip ms-1" data-bs-toggle="tooltip" title="Format: min-max (e.g., 81-100)"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="coTableBody">
+                                <!-- Rows will be generated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3" role="alert">
+                        <i class="fas fa-info-circle me-2"></i> Select the number of Course Outcomes from the dropdown above to generate the input fields.
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="reset" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-undo me-1"></i> Reset
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> Save Configuration
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light text-muted">
+                <small><i class="fas fa-info-circle me-1"></i> Configure the attainment criteria for each Course Outcome (CO). This will be used to calculate the final CO attainment levels.</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help Modal -->
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="helpModalLabel"><i class="fas fa-question-circle me-2"></i>CO Attainment Configuration Help</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="fw-bold">How to Use This Form:</h6>
+                    <ol class="mb-4">
+                        <li>Select the number of Course Outcomes (COs) from the dropdown menu.</li>
+                        <li>Enter a default threshold value (%) and click "Apply to All" if you want to use the same threshold for all COs.</li>
+                        <li>Set default level ranges and click "Apply Levels to All COs" to apply the same ranges to all course outcomes.</li>
+                        <li>For each CO, you can modify individual threshold percentages and level ranges if needed.</li>
+                        <li>Click "Save Configuration" when you're done.</li>
+                    </ol>
+                    
+                    <h6 class="fw-bold">Field Descriptions:</h6>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item">
+                            <strong>Course Outcome (CO):</strong> The identifier for each course outcome (CO1, CO2, etc.)
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Threshold (%):</strong> The minimum percentage students must achieve for the CO to be considered attained
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Level Ranges:</strong> Define the percentage ranges for each attainment level (format: min-max)
+                            <ul>
+                                <li>Level 1: Basic attainment</li>
+                                <li>Level 2: Moderate attainment</li>
+                                <li>Level 3: Advanced attainment</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i> <strong>Tip:</strong> Ensure that your level ranges are continuous without gaps or overlaps. For example, if Level 1 is 40-60, Level 2 should start at 61.
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i> <strong>Important:</strong> The level ranges should cover the entire spectrum from the threshold to 100%. For example, if your threshold is 40%, your levels might be 40-60, 61-80, and 81-100.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to generate CO rows based on the selected number
+        function generateCORows() {
+            const coCount = parseInt(document.getElementById("coCount").value);
+            document.getElementById("co_count_input").value = coCount;
+
+            const tableBody = document.getElementById("coTableBody");
+    
+            // Clear existing rows
+            tableBody.innerHTML = '';
+    
+            if (isNaN(coCount)) {
+                // Show the info alert if no selection
+                document.querySelector(".alert-info").style.display = "block";
+                return;
+            }
+    
+            // Hide the info alert
+            document.querySelector(".alert-info").style.display = "none";
+    
+            // Generate rows
+            for (let i = 1; i <= coCount; i++) {
+                const row = document.createElement('tr');
+    
+                // CO identifier cell
+                const coCell = document.createElement('td');
+                coCell.innerHTML = `<input name="co_${i}" class="form-control" value="CO${i}" readonly>`;
+                row.appendChild(coCell);
+    
+                // Threshold cell
+                const thresholdCell = document.createElement('td');
+                thresholdCell.innerHTML = `<input name="threshold_${i}" type="number" min="0" max="100" class="form-control threshold-input" placeholder="40" required>`;
+                row.appendChild(thresholdCell);
+    
+                // Level 1 cell
+                const level1Cell = document.createElement('td');
+                level1Cell.innerHTML = `<input name="level1_${i}" class="form-control level1-input" placeholder="40-60" pattern="\\d+-\\d+" required>`;
+                row.appendChild(level1Cell);
+    
+                // Level 2 cell
+                const level2Cell = document.createElement('td');
+                level2Cell.innerHTML = `<input name="level2_${i}" class="form-control level2-input" placeholder="61-80" pattern="\\d+-\\d+" required>`;
+                row.appendChild(level2Cell);
+    
+                // Level 3 cell
+                const level3Cell = document.createElement('td');
+                level3Cell.innerHTML = `<input name="level3_${i}" class="form-control level3-input" placeholder="81-100" pattern="\\d+-\\d+" required>`;
+                row.appendChild(level3Cell);
+    
+                tableBody.appendChild(row);
+            }
+    
+            // Apply default threshold if available
+            const defaultThreshold = document.getElementById("defaultThreshold").value;
+            if (defaultThreshold) {
+                const thresholdInputs = document.querySelectorAll('.threshold-input');
+                thresholdInputs.forEach(input => {
+                    input.value = defaultThreshold;
+                });
+            }
+    
+            // Apply default levels if available
+            applyDefaultLevels();
+        }
+    
+        function applyDefaultThreshold() {
+            const defaultThreshold = document.getElementById("defaultThreshold").value;
+            const thresholdInputs = document.querySelectorAll('.threshold-input');
+    
+            thresholdInputs.forEach(input => {
+                input.value = defaultThreshold;
+            });
+    
+            showToast('Threshold applied to all COs');
+        }
+    
+        function applyDefaultLevels() {
+            const defaultLevel1 = document.getElementById("defaultLevel1").value;
+            const defaultLevel2 = document.getElementById("defaultLevel2").value;
+            const defaultLevel3 = document.getElementById("defaultLevel3").value;
+    
+            document.querySelectorAll('.level1-input').forEach(input => input.value = defaultLevel1);
+            document.querySelectorAll('.level2-input').forEach(input => input.value = defaultLevel2);
+            document.querySelectorAll('.level3-input').forEach(input => input.value = defaultLevel3);
+    
+            showToast('Level ranges applied to all COs');
+        }
+    
+        function showToast(message) {
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+    
+            const toastId = 'toast-' + Date.now();
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-check-circle me-2"></i> ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            toastContainer.innerHTML += toastHtml;
+    
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
+            toast.show();
+    
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+    
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+    
+            // Level range validation
+            document.querySelectorAll('input[pattern]').forEach(input => {
+                input.addEventListener('input', function () {
+                    const pattern = new RegExp(this.getAttribute('pattern'));
+                    if (this.value && !pattern.test(this.value)) {
+                        this.setCustomValidity('Please use the format: min-max (e.g., 40-60)');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            });
+        });
+    </script>
+    
+</body>
+</html>

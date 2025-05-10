@@ -1,0 +1,12 @@
+Flask
+pandas
+openpyxl
+fpdf
+matplotlib
+numpy
+scipy
+Werkzeug
+Jinja2
+MarkupSafe
+itsdangerous
+click

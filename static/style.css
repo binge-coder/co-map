@@ -1,0 +1,35 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.table {
+    background-color: #ffffff;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 0.75rem;
+    text-align: center;
+}
+
+.table-bordered td, .table-bordered th {
+    border: 1px solid #dee2e6;
+}
+
+.card {
+    background: linear-gradient(to right, #202c3b, #2d394d);
+    transition: background 0.3s ease;
+}
+
+[data-theme="dark"] .card {
+    background: linear-gradient(to right, #1e1e2f, #2a2a3b);
+}
+
+[data-theme="light"] .card {
+    background: linear-gradient(to right, #f1f9ff, #e3f7ef);
+}
+
+.text-info {
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}

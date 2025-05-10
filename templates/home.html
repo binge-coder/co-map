@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA CO-PO Mapping Automation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #1a1e22;
+            --darker: #151819;
+            --light: #f8f9fa;
+            --accent: #f39c12;
+            --gradient-start: #3498db;
+            --gradient-end: #2ecc71;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.7;
+        }
+        
+        .navbar {
+            background-color: var(--darker) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            padding: 0.8rem 1rem;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--primary) !important;
+        }
+        
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+        
+        .navbar-nav .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 10%;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .navbar-nav .nav-link.active:after,
+        .navbar-nav .nav-link:hover:after {
+            width: 80%;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(26, 30, 34, 0.95), rgba(21, 24, 25, 0.98)), 
+                        url('/api/placeholder/1200/600') center/cover no-repeat;
+            padding: 4rem 0;
+            border-radius: 0 0 50px 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 3rem;
+        }
+        
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .content-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .info-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-section h2 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .info-text {
+            font-size: 1.05rem;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-item {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            height: 100%;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary-gradient {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-primary-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .btn-accent:hover {
+            background-color: #e67e22;
+            transform: translateY(-3px);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+        
+        .footer {
+            background-color: var(--darker);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #loadingSpinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-buttons .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>NBA CO-PO
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/downloads">
+                            <i class="fas fa-download me-1"></i> Downloads
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="content-container text-center">
+            <h1 class="hero-title">NBA CO-PO MAPPING AUTOMATION</h1>
+            <p class="lead text-light mb-4">
+                Streamline your outcomes assessment process with our comprehensive automation tool
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <!-- Info Section -->
+        <section class="info-section">
+            <div class="info-card">
+                <h2><i class="fas fa-graduation-cap me-2"></i>What is Outcome-Based Education?</h2>
+                <p class="info-text">
+                    Outcome-Based Education (OBE) is a student-centered approach to education that emphasizes the achievement of specific,
+                    measurable learning outcomes. Rather than focusing solely on what is taught, OBE prioritizes what students are expected
+                    to learn and be able to do after completing a course or program.
+                </p>
+                <p class="info-text">
+                    The core philosophy of OBE is that all educational activities should align with the desired learning outcomes,
+                    ensuring that students acquire the necessary skills, knowledge, and attitudes by the end of their academic journey.
+                </p>
+                <p class="info-text">
+                    In an OBE system, learning outcomes are predefined and clearly stated for each subject or course.
+                    These outcomes are typically classified into Course Outcomes (COs), Program Outcomes (POs), and Program Specific Outcomes (PSOs).
+                    Continuous assessment and feedback mechanisms are essential components of OBE, enabling educators to evaluate how
+                    well the students are meeting the outcomes and to adapt teaching strategies accordingly.
+                </p>
+                <p class="info-text">
+                    The implementation of OBE fosters accountability and transparency in the educational process.
+                </p>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="mb-5">
+            <h2 class="text-center mb-4" style="color: var(--primary)">Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h4>Exam Management</h4>
+                        <p>Easily manage question papers and student marks for both Minor 1 and Minor 2 exams.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h4>CO Attainment</h4>
+                        <p>Automatically calculate CO attainment levels based on student performance and defined thresholds.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <h4>Reports & Downloads</h4>
+                        <p>Generate comprehensive reports and visualizations for documentation and analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       
+<!-- Action Buttons -->
+<!-- Action Buttons -->
+<div class="text-center action-buttons">
+    <a href="/m1-question-paper" class="btn btn-primary-gradient">
+        <i class="fas fa-arrow-right me-2"></i>PROCEED TO NEXT STEP
+    </a>
+    
+    {% if config_exists %}
+    <a href="/co-attainment" class="btn btn-accent">
+        <i class="fas fa-chart-line me-2"></i>VIEW CO ATTAINMENT
+    </a>
+    
+    <<a href="/generate-report" class="btn btn-info" id="generateReportBtn">
+    <i class="fas fa-file-pdf me-2"></i>GENERATE FULL REPORT
+   </a>
+    {% endif %}
+
+    <a href="/co-po-pso-mapping" class="btn btn-success">
+        <i class="fas fa-project-diagram me-2"></i>CO-PO-PSO MAPPING
+    </a>
+</div>
+
+<div id="loadingSpinner" style="display: none;">
+    <div class="spinner-border text-info" role="status" style="width: 4rem; height: 4rem;">
+        <span class="visually-hidden">Generating report...</span>
+    </div>
+    <p class="mt-2">Generating report, please wait...</p>
+</div>
+
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">© 2025 NBA CO-PO Mapping Automation Tool</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+document.getElementById("generateReportBtn").addEventListener("click", function() {
+    window.addEventListener('beforeunload', function () {
+        document.getElementById("loadingSpinner").style.display = "block";
+    });
+});
+
+window.addEventListener('load', function() {
+    document.getElementById("loadingSpinner").style.display = "none";
+});
+</script>
+
+</body>

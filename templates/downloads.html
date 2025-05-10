@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA CO-PO | Downloads</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --nba-blue: #17408B;
+            --nba-red: #C9082A;
+            --dark-bg: #121212;
+            --card-bg: #1E1E1E;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: var(--nba-blue) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 0.5rem 0;
+        }
+        
+        .navbar-brand img {
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.25rem;
+            border-radius: 4px;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white !important;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--nba-blue), var(--nba-red));
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .file-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .file-icon {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        
+        .excel-icon { color: #1D6F42; }
+        .pdf-icon { color: #FF5733; }
+        .image-icon { color: #4dabf7; }
+        
+        .file-details {
+            padding: 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .file-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .download-btn {
+            width: 100%;
+            font-weight: 600;
+            border-radius: 4px;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-excel {
+            background-color: #1D6F42;
+            border-color: #1D6F42;
+            color: white;
+        }
+        
+        .btn-excel:hover {
+            background-color: #185735;
+            border-color: #185735;
+            color: white;
+        }
+        
+        .btn-pdf {
+            background-color: #FF5733;
+            border-color: #FF5733;
+            color: white;
+        }
+        
+        .btn-pdf:hover {
+            background-color: #E74C3C;
+            border-color: #E74C3C;
+            color: white;
+        }
+        
+        .btn-image {
+            background-color: #4dabf7;
+            border-color: #4dabf7;
+            color: white;
+        }
+        
+        .btn-image:hover {
+            background-color: #3793dd;
+            border-color: #3793dd;
+            color: white;
+        }
+        
+        .search-bar {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            background-color: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            outline: none;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .filter-btn {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .filter-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .filter-active {
+            background-color: var(--nba-blue);
+            border-color: var(--nba-blue);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 0;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 767.98px) {
+            .file-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/api/placeholder/32/32" alt="NBA CO-PO Logo" width="32" height="32" class="d-inline-block align-top rounded">
+                NBA CO-PO
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/downloads"><i class="fas fa-download me-1"></i> Downloads</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold mb-2">Downloads Center</h1>
+                    <p class="lead mb-0">Access and download our collection of NBA analysis resources</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <i class="fas fa-download fa-4x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Search and Filter Bar -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="search-bar d-flex align-items-center">
+                    <i class="fas fa-search me-3 text-muted"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search files...">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group w-100">
+                    <button class="btn filter-btn filter-active" data-filter="all">All Files</button>
+                    <button class="btn filter-btn" data-filter="excel"><i class="fas fa-file-excel me-1"></i> Excel</button>
+                    <button class="btn filter-btn" data-filter="pdf"><i class="fas fa-file-pdf me-1"></i> PDF</button>
+                    <button class="btn filter-btn" data-filter="image"><i class="fas fa-file-image me-1"></i> Images</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Files Grid -->
+        <div class="row" id="filesGrid">
+            {% if files %}
+                {% for file in files %}
+                    <div class="col-md-4 col-sm-6 file-item">
+                        <div class="file-card">
+                            <div class="file-icon">
+                                {% if file.endswith('.xlsx') %}
+                                    <i class="fas fa-file-excel excel-icon"></i>
+                                {% elif file.endswith('.pdf') %}
+                                    <i class="fas fa-file-pdf pdf-icon"></i>
+                                {% elif file.endswith('.png') %}
+                                    <i class="fas fa-file-image image-icon"></i>
+                                {% endif %}
+                            </div>
+                            <div class="file-details">
+                                <h5 class="file-title">{{ file.replace('_', ' ').replace('.xlsx', '').replace('.pdf', '').replace('.png', '').title() }}</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        {% if file.endswith('.xlsx') %}
+                                            Excel File
+                                        {% elif file.endswith('.pdf') %}
+                                            PDF Document
+                                        {% elif file.endswith('.png') %}
+                                            Image File
+                                        {% endif %}
+                                    </small>
+                                    <span class="badge bg-secondary">2MB</span>
+                                </div>
+                                <div class="mt-3">
+                                    {% if file.endswith('.xlsx') %}
+                                        <a href="/download/{{ file }}" class="btn btn-excel download-btn">
+                                            <i class="fas fa-download me-2"></i>Download Excel
+                                        </a>
+                                    {% elif file.endswith('.pdf') %}
+                                        <a href="/download/{{ file }}" class="btn btn-pdf download-btn">
+                                            <i class="fas fa-download me-2"></i>Download PDF
+                                        </a>
+                                    {% elif file.endswith('.png') %}
+                                        <a href="/download/{{ file }}" class="btn btn-image download-btn">
+                                            <i class="fas fa-download me-2"></i>Download Image
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h3>No Files Available</h3>
+                    <p class="text-muted">There are currently no files available for download.</p>
+                    <a href="/" class="btn btn-outline-light mt-3">
+                        <i class="fas fa-home me-2"></i>Return to Home
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark py-4 mt-5 border-top border-secondary">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3">NBA CO-PO</h5>
+                    <p class="text-muted small">Providing comprehensive NBA analytics and resources.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-muted">&copy; 2025 NBA CO-PO. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchQuery = this.value.toLowerCase();
+            const fileItems = document.querySelectorAll('.file-item');
+            
+            fileItems.forEach(item => {
+                const fileName = item.querySelector('.file-title').textContent.toLowerCase();
+                if (fileName.includes(searchQuery)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active state
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active'));
+                this.classList.add('filter-active');
+                
+                const filter = this.getAttribute('data-filter');
+                const fileItems = document.querySelectorAll('.file-item');
+                
+                fileItems.forEach(item => {
+                    if (filter === 'all') {
+                        item.style.display = 'block';
+                    } else {
+                        const fileIcon = item.querySelector('.file-icon i');
+                        if (filter === 'excel' && fileIcon.classList.contains('fa-file-excel')) {
+                            item.style.display = 'block';
+                        } else if (filter === 'pdf' && fileIcon.classList.contains('fa-file-pdf')) {
+                            item.style.display = 'block';
+                        } else if (filter === 'image' && fileIcon.classList.contains('fa-file-image')) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
