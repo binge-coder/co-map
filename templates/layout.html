@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include '_components/head.html' %}
+    <title>{% block title %}NBA CO-PO Mapping{% endblock %}</title>
+    {% block additional_head %}{% endblock %}
+</head>
+
+<body>
+    {% set active_page = active_page|default('') %}
+    {% include '_components/navbar.html' %}
+
+    {% block content %}{% endblock %}
+
+    {% include '_components/footer.html' %}
+
+    {% include '_components/scripts.html' %}
+    {% block additional_scripts %}{% endblock %}
+</body>
+
+</html>

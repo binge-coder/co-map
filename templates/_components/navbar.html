@@ -1,0 +1,30 @@
+<!-- Navbar Component -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-chart-line me-2"></i>NBA CO-PO
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'home' %}active{% endif %}" href="/">
+                        <i class="fas fa-home me-1"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'downloads' %}active{% endif %}" href="/downloads">
+                        <i class="fas fa-download me-1"></i> Downloads
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if active_page == 'mapping' %}active{% endif %}" href="/co-po-pso-mapping">
+                        <i class="fas fa-project-diagram me-1"></i> Mapping
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
