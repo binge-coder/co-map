@@ -493,7 +493,7 @@
             min-width: 230px;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
             z-index: 1;
             border: none;
             padding: 0;
@@ -825,7 +825,9 @@
                 <a href="/downloads" class="btn btn-outline-primary">View Downloads</a>
             </div>
         </div>
-    </section> <!-- Main Content -->
+    </section>
+
+    <!-- Main Content -->
     <div class="content-container">
         <!-- Info Section -->
         <section class="info-section fade-in-delay-2">
@@ -968,7 +970,9 @@
                     </div>
                 </div>
             </div>
-        </section> <!-- Action Buttons -->
+        </section>
+
+        <!-- Action Buttons -->
         <section class="action-section" id="get-started">
             <div class="text-center">
                 <div class="mb-5">
@@ -1142,3 +1146,5 @@
         });
     </script>
 </body>
+
+</html>
