@@ -179,11 +179,11 @@
         margin-bottom: 2rem;
         transition: all 0.3s ease;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .search-bar:focus-within {
-        border-color: rgba(67, 97, 238, 0.3);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        height: 48px;
+        /* Set fixed height to match buttons */
+        min-height: 48px;
+        display: flex;
+        align-items: center;
     }
 
     .search-input {
@@ -193,6 +193,11 @@
         width: 100%;
         outline: none;
         font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
     }
 
     .search-input::placeholder {
@@ -200,25 +205,77 @@
         opacity: 0.7;
     }
 
-    .filter-btn {
-        background-color: var(--card-bg);
-        border: 1px solid var(--card-border);
-        color: var(--text-primary);
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-family: 'Inter', sans-serif;
-        font-weight: 500;
-        transition: all 0.3s ease;
+    .search-bar .fa-search {
+        color: var(--text-secondary) !important;
+        opacity: 0.7;
+        font-size: 1.1rem;
+        margin-right: 0.75rem;
     }
 
-    .filter-btn:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-        transform: translateY(-2px);
+    .btn-group.w-100 {
+        width: 100%;
+        display: flex;
+        align-items: stretch;
+        height: 48px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--card-border);
+        overflow: hidden;
+    }
+
+    .filter-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        border-radius: 0;
+        padding: 0.5rem 1.5rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        letter-spacing: 0.2px;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: none;
+        outline: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .filter-btn:last-child {
+        border-right: none;
+    }
+
+    .filter-btn:first-child {
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+    }
+
+    .filter-btn:last-child {
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    .filter-btn:hover,
+    .filter-btn:focus {
+        background: rgba(67, 97, 238, 0.08);
+        color: var(--gradient-end);
+        box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
     }
 
     .filter-active {
-        background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
-        border-color: transparent;
+        background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+        color: #fff !important;
+        box-shadow: 0 4px 16px 0 rgba(67, 97, 238, 0.12);
+        border: none;
+        z-index: 1;
+    }
+
+    .filter-btn i {
+        font-size: 1.2em;
+        margin-right: 0.5em;
     }
 
     .empty-state {
@@ -241,6 +298,25 @@
         color: transparent;
     }
 
+    .badge-gradient {
+        background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+        color: #fff;
+        border-radius: 999px;
+        padding: 0.45em 1.1em;
+        font-size: 0.82em;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        box-shadow: 0 2px 8px 0 rgba(67, 97, 238, 0.10);
+        border: 1.5px solid rgba(255, 255, 255, 0.10);
+        text-transform: uppercase;
+        display: inline-block;
+        transition: box-shadow 0.2s;
+    }
+
+    .badge-gradient:hover {
+        box-shadow: 0 4px 16px 0 rgba(67, 97, 238, 0.18);
+    }
+
     @media (max-width: 767.98px) {
         .file-card {
             margin-bottom: 1rem;
@@ -252,6 +328,13 @@
 
         .page-header {
             padding: 4rem 0 3rem;
+        }
+
+        .search-bar,
+        .filter-btn,
+        .btn-group.w-100 {
+            height: 40px;
+            min-height: 40px;
         }
     }
 </style>
@@ -314,19 +397,15 @@
                 <div class="file-details">
                     <h5 class="file-title">{{ file.replace('_', ' ').replace('.xlsx', '').replace('.pdf',
                         '').replace('.png', '').title() }}</h5>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
-                            {% if file.endswith('.xlsx') %}
-                            Excel File
-                            {% elif file.endswith('.pdf') %}
-                            PDF Document
-                            {% elif file.endswith('.png') %}
-                            Image File
-                            {% endif %}
-                        </small>
-                        <span class="badge"
-                            style="background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));">2MB</span>
-                    </div>
+                    <small class="text-muted">
+                        {% if file.endswith('.xlsx') %}
+                        Excel File
+                        {% elif file.endswith('.pdf') %}
+                        PDF Document
+                        {% elif file.endswith('.png') %}
+                        Image File
+                        {% endif %}
+                    </small>
                     <div class="mt-3">
                         {% if file.endswith('.xlsx') %}
                         <a href="/download/{{ file }}" class="btn btn-excel download-btn">
