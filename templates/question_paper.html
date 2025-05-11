@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,7 +61,8 @@
             border-radius: 0 0 12px 12px !important;
         }
 
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             background-color: #fff;
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -69,10 +71,16 @@
             transition: all 0.2s ease;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
             outline: none;
+        }
+
+        ::placeholder {
+            color: #b0b8c1 !important;
+            opacity: 1;
         }
 
         textarea.form-control {
@@ -121,7 +129,8 @@
             color: white;
         }
 
-        .btn-primary:hover, .btn-primary:focus {
+        .btn-primary:hover,
+        .btn-primary:focus {
             background-color: var(--primary-hover);
             border-color: var(--primary-hover);
         }
@@ -263,7 +272,9 @@
                 padding: 1rem 0.5rem;
             }
 
-            .card-header, .card-body, .card-footer {
+            .card-header,
+            .card-body,
+            .card-footer {
                 padding: 1rem;
             }
 
@@ -273,6 +284,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <div class="card">
@@ -281,28 +293,29 @@
                     <h1 class="paper-title">
                         <i class="fas fa-file-alt me-2 text-primary"></i>
                         {% if 'final' in paper %}
-                            Final Exam Question Paper
+                        Final Exam Question Paper
                         {% elif 'm1' in paper %}
-                            Minor 1 Question Paper
+                        Minor 1 Question Paper
                         {% elif 'm2' in paper %}
-                            Minor 2 Question Paper
+                        Minor 2 Question Paper
                         {% else %}
-                            {{ paper.replace('_', ' ').replace('question paper', 'Question Paper').title() }}
+                        {{ paper.replace('_', ' ').replace('question paper', 'Question Paper').title() }}
                         {% endif %}
                     </h1>
-                    
+
                     <p class="text-muted mb-0 mt-1">Prepare and manage your examination questions</p>
                 </div>
-                <div class="header-metadata">
+                <!-- the below component "today's date" is unnecessary. need to remove it -->
+                <!-- <div class="header-metadata">
                     <span class="badge bg-light text-dark border">
                         <i class="far fa-calendar-alt me-1"></i>{{ "Today's Date" }}
                     </span>
-                </div>
+                </div> -->
             </div>
             <div class="card-body">
                 <form id="questionForm" method="POST">
                     <input type="hidden" name="row_count" id="row_count" value="7">
-                    
+
                     <div class="table-responsive">
                         <table class="table" id="entryTable">
                             <thead>
@@ -319,16 +332,20 @@
                                 {% for i in range(1, 8) %}
                                 <tr>
                                     <td>
-                                        <input type="text" name="qno_{{ i }}" class="form-control question-number" placeholder="#" required>
+                                        <input type="text" name="qno_{{ i }}" class="form-control question-number"
+                                            placeholder="#" required>
                                     </td>
                                     <td>
-                                        <textarea name="question_{{ i }}" class="form-control" rows="2" placeholder="Enter question text..." required></textarea>
+                                        <textarea name="question_{{ i }}" class="form-control" rows="2"
+                                            placeholder="Enter question text..." required></textarea>
                                     </td>
                                     <td>
-                                        <input type="number" name="marks_{{ i }}" class="form-control marks-column" placeholder="0" min="1" required>
+                                        <input type="number" name="marks_{{ i }}" class="form-control marks-column"
+                                            placeholder="0" min="1" required>
                                     </td>
                                     <td>
-                                        <input type="text" name="co_{{ i }}" class="form-control co-column" placeholder="CO#" required>
+                                        <input type="text" name="co_{{ i }}" class="form-control co-column"
+                                            placeholder="CO#" required>
                                     </td>
                                     <td>
                                         <select name="bloom_{{ i }}" class="form-select bloom-column" required>
@@ -342,7 +359,8 @@
                                         </select>
                                     </td>
                                     <td class="text-center">
-                                        <button type="button" class="btn btn-danger btn-sm remove-btn" title="Remove this question">
+                                        <button type="button" class="btn btn-danger btn-sm remove-btn"
+                                            title="Remove this question">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </td>
@@ -351,12 +369,12 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between align-items-center mt-4">
                         <button type="button" class="btn btn-add-row" id="addRow">
                             <i class="fas fa-plus me-2"></i>Add Question
                         </button>
-                        
+
                         <div class="action-buttons">
                             <button type="button" class="btn btn-outline-primary me-2">
                                 <i class="fas fa-save me-1"></i>Save Draft
@@ -390,18 +408,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Initialize tooltips
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-            
+
             // Add new row
-            $("#addRow").click(function() {
+            $("#addRow").click(function () {
                 const rowCount = parseInt($("#row_count").val()) + 1;
                 $("#row_count").val(rowCount);
-                
+
                 const newRow = `
                     <tr>
                         <td>
@@ -434,19 +452,19 @@
                         </td>
                     </tr>
                 `;
-                
+
                 $("#entryTable tbody").append(newRow);
                 updateCounts();
-                
+
                 // Initialize tooltip for new button
                 const newTooltips = [].slice.call(document.querySelectorAll('[title]:not([data-bs-original-title])'));
                 newTooltips.map(function (tooltipTriggerEl) {
                     return new bootstrap.Tooltip(tooltipTriggerEl);
                 });
             });
-            
+
             // Remove row
-            $(document).on("click", ".remove-btn", function() {
+            $(document).on("click", ".remove-btn", function () {
                 if ($("#entryTable tbody tr").length > 1) {
                     $(this).closest("tr").remove();
                     updateCounts();
@@ -454,37 +472,38 @@
                     alert("At least one question is required.");
                 }
             });
-            
+
             // Update counts
             function updateCounts() {
                 const questionCount = $("#entryTable tbody tr").length;
                 $("#questionCount").text(questionCount);
-                
+
                 let totalMarks = 0;
-                $("input[name^='marks_']").each(function() {
+                $("input[name^='marks_']").each(function () {
                     const marks = parseInt($(this).val()) || 0;
                     totalMarks += marks;
                 });
                 $("#totalMarks").text(totalMarks);
             }
-            
+
             // Update counts when marks change
-            $(document).on("input", "input[name^='marks_']", function() {
+            $(document).on("input", "input[name^='marks_']", function () {
                 updateCounts();
             });
-            
+
             // Form validation
-            $("#questionForm").on("submit", function(e) {
+            $("#questionForm").on("submit", function (e) {
                 if (!this.checkValidity()) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
                 $(this).addClass("was-validated");
             });
-            
+
             // Initial counts update
             updateCounts();
         });
     </script>
 </body>
+
 </html>
