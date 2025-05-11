@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +16,7 @@
             --border-color: #444;
             --text-color: #e0e0e0;
         }
-        
+
         body {
             background-color: var(--primary-bg);
             color: var(--text-color);
@@ -24,14 +25,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: linear-gradient(to bottom right, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+            background-image: linear-gradient(to bottom right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4));
             background-attachment: fixed;
         }
-        
+
         .container {
             max-width: 600px;
         }
-        
+
         .card {
             background-color: var(--card-bg);
             border: none;
@@ -39,17 +40,21 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
-        
+
         .card-header {
             background-color: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid var(--border-color);
             padding: 1.5rem;
         }
-        
+
+        .card-header .text-muted {
+            color: rgba(224, 224, 224, 0.7) !important;
+        }
+
         .card-body {
             padding: 2rem;
         }
-        
+
         .option-box {
             background-color: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
@@ -58,55 +63,68 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 1rem;
         }
-        
+
         .option-box:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             background-color: rgba(255, 255, 255, 0.08);
             border-color: var(--accent-color);
         }
-        
+
         .option-title {
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            color: var(--text-color);
         }
-        
+
         .option-description {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
+            color: rgba(224, 224, 224, 0.8);
+            font-size: 0.95rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .btn {
             border-radius: 8px;
             padding: 0.75rem 1.5rem;
             font-weight: 500;
             transition: all 0.2s;
         }
-        
+
         .btn-primary {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
         }
-        
+
         .btn-primary:hover {
             background-color: #2a75ed;
             border-color: #2a75ed;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(58, 134, 255, 0.25);
         }
-        
+
         .btn-success {
             background-color: var(--success-color);
             border-color: var(--success-color);
         }
-        
+
         .btn-success:hover {
             background-color: #2d9300;
             border-color: #2d9300;
         }
-        
+
+        .btn-outline-light {
+            color: var(--text-color);
+            border-color: var(--border-color);
+            background: transparent;
+        }
+
+        .btn-outline-light:hover {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+
         .form-control {
             background-color: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--border-color);
@@ -115,19 +133,19 @@
             padding: 0.75rem 1rem;
             transition: all 0.2s;
         }
-        
+
         .form-control:focus {
             background-color: rgba(255, 255, 255, 0.12);
             color: #fff;
             border-color: var(--accent-color);
             box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
         }
-        
+
         .file-upload-wrapper {
             position: relative;
             margin-bottom: 1rem;
         }
-        
+
         .file-label {
             display: flex;
             align-items: center;
@@ -139,13 +157,18 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
+            color: var(--text-color);
         }
-        
+
         .file-label:hover {
             background-color: rgba(255, 255, 255, 0.08);
             border-color: var(--accent-color);
         }
-        
+
+        .file-label i {
+            color: var(--accent-color);
+        }
+
         .file-input {
             position: absolute;
             left: 0;
@@ -155,52 +178,58 @@
             height: 100%;
             cursor: pointer;
         }
-        
+
         .file-name {
             margin-top: 0.5rem;
             font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(224, 224, 224, 0.8);
         }
-        
+
         .icon-large {
             font-size: 2.5rem;
             margin-bottom: 1rem;
         }
-        
+
         .page-title {
             font-weight: 600;
             letter-spacing: 0.5px;
         }
-        
+
         .separator {
             display: flex;
             align-items: center;
             text-align: center;
             margin: 1.5rem 0;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(224, 224, 224, 0.5);
             font-size: 0.9rem;
         }
-        
-        .separator::before, .separator::after {
+
+        .separator::before,
+        .separator::after {
             content: '';
             flex: 1;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .separator::before {
             margin-right: 1rem;
         }
-        
+
         .separator::after {
             margin-left: 1rem;
         }
-        
+
         .badge {
             padding: 0.5rem 0.75rem;
             font-weight: 500;
             border-radius: 6px;
         }
-        
+
+        .badge.bg-info {
+            background-color: var(--accent-color) !important;
+            color: #fff !important;
+        }
+
         @media (max-width: 576px) {
             .card-body {
                 padding: 1.5rem;
@@ -208,21 +237,20 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container py-4">
         <div class="card shadow-lg">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2 class="page-title text-info m-0">
-                        <i class="fas fa-graduation-cap me-2"></i>{% if exam == 'final' %}Final Exam Marks{% else %}{{ exam|capitalize }}{% endif %}
+                        <i class="fas fa-graduation-cap me-2"></i>{% if exam == 'final' %}Final Exam Marks{% else %}{{
+                        exam|capitalize }}{% endif %}
                     </h2>
-                    <span class="badge bg-info">
-                        <i class="fas fa-calendar-alt me-1"></i>{{ "Today's Date" }}
-                    </span>
                 </div>
                 <p class="text-muted mt-2 mb-0">Select how you'd like to enter examination data</p>
             </div>
-            
+
             <div class="card-body">
                 <div class="option-box">
                     <div class="text-center mb-4">
@@ -237,9 +265,9 @@
                         <i class="fas fa-pencil-alt me-2"></i>Enter Data Manually
                     </a>
                 </div>
-                
+
                 <div class="separator">OR</div>
-                
+
                 <div class="option-box">
                     <div class="text-center mb-4">
                         <i class="fas fa-file-excel icon-large text-success"></i>
@@ -249,7 +277,7 @@
                         Import examination data directly from an Excel spreadsheet.
                         Ideal for large batches of student marks and quick data entry.
                     </p>
-                    
+
                     <form method="POST" action="/upload/{{ exam }}" enctype="multipart/form-data" id="uploadForm">
                         <div class="file-upload-wrapper">
                             <label for="fileInput" class="file-label" id="uploadLabel">
@@ -259,14 +287,15 @@
                                     <div class="file-name" id="fileName"></div>
                                 </div>
                             </label>
-                            <input type="file" name="file" id="fileInput" class="file-input" accept=".xlsx,.xls" required>
+                            <input type="file" name="file" id="fileInput" class="file-input" accept=".xlsx,.xls"
+                                required>
                         </div>
                         <button type="submit" class="btn btn-success w-100">
                             <i class="fas fa-upload me-2"></i>Upload & Process Excel File
                         </button>
                     </form>
                 </div>
-                
+
                 <div class="text-center mt-4">
                     <a href="/" class="btn btn-outline-light">
                         <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
@@ -279,12 +308,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.getElementById('fileInput');
             const fileName = document.getElementById('fileName');
             const uploadLabel = document.getElementById('uploadLabel');
-            
-            fileInput.addEventListener('change', function() {
+
+            fileInput.addEventListener('change', function () {
                 if (this.files && this.files[0]) {
                     fileName.textContent = this.files[0].name;
                     uploadLabel.style.borderColor = 'var(--success-color)';
@@ -295,23 +324,23 @@
                     uploadLabel.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
                 }
             });
-            
+
             // Drag and drop functionality
-            uploadLabel.addEventListener('dragover', function(e) {
+            uploadLabel.addEventListener('dragover', function (e) {
                 e.preventDefault();
                 this.style.borderColor = 'var(--accent-color)';
                 this.style.backgroundColor = 'rgba(58, 134, 255, 0.1)';
             });
-            
-            uploadLabel.addEventListener('dragleave', function(e) {
+
+            uploadLabel.addEventListener('dragleave', function (e) {
                 e.preventDefault();
                 if (!fileInput.files.length) {
                     this.style.borderColor = 'var(--border-color)';
                     this.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
                 }
             });
-            
-            uploadLabel.addEventListener('drop', function(e) {
+
+            uploadLabel.addEventListener('drop', function (e) {
                 e.preventDefault();
                 if (e.dataTransfer.files.length) {
                     fileInput.files = e.dataTransfer.files;
@@ -326,9 +355,9 @@
                     }
                 }
             });
-            
+
             // Form validation
-            document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            document.getElementById('uploadForm').addEventListener('submit', function (e) {
                 if (!fileInput.files.length) {
                     e.preventDefault();
                     alert('Please select a file to upload');
@@ -339,4 +368,5 @@
         });
     </script>
 </body>
+
 </html>
