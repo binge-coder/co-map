@@ -789,15 +789,6 @@
                         <span>VIEW CO ATTAINMENT</span>
                     </div>
                 </a>
-
-                <a href="/generate-report" class="btn action-btn tertiary-btn" id="generateReportBtn">
-                    <div class="btn-content">
-                        <div class="btn-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <span>GENERATE FULL REPORT</span>
-                    </div>
-                </a>
                 {% endif %}
 
                 <a href="/co-po-pso-mapping" class="btn action-btn quaternary-btn">
@@ -808,6 +799,17 @@
                         <span>CO-PO-PSO MAPPING</span>
                     </div>
                 </a>
+
+                {% if config_exists %}
+                <a href="/generate-report" class="btn action-btn tertiary-btn" id="generateReportBtn">
+                    <div class="btn-content">
+                        <div class="btn-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <span>GENERATE FULL REPORT</span>
+                    </div>
+                </a>
+                {% endif %}
             </div>
         </div>
     </section>
