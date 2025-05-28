@@ -1,4 +1,17 @@
-# First time setup
+---
+title: CO Mapping and Attainment System
+emoji: 📊
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
+
+# CO Mapping and Attainment System
+
+A Flask-based web application for Course Outcome (CO) mapping and attainment calculation for educational institutions.
+
+## First time setup
 - make venv :
 ```
 python -m venv venv

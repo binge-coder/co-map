@@ -1,0 +1,51 @@
+Folder PATH listing for volume Acer
+Volume serial number is 4631-27AE
+C:.
+|   .gitignore
+|   app.log
+|   app.py
+|   Readme.md
+|   report_generator.py
+|   requirements.txt
+|   tree.txt
+|   
++---computations
+|   |   attainment_logic.py
+|   |   
+|   \---__pycache__
+|           attainment_logic.cpython-313.pyc
+|           
++---fonts
+|       DejaVuSans.pkl
+|       DejaVuSans.ttf
+|       
++---static
+|   |   script.js
+|   |   style.css
+|   |   
+|   \---images
++---templates
+|   |   choose_entry_mode.html
+|   |   components.md
+|   |   copopso_mapping.html
+|   |   co_attainment_result.html
+|   |   co_config.html
+|   |   display.html
+|   |   downloads.html
+|   |   home.html
+|   |   layout.html
+|   |   manual_entry.html
+|   |   question_paper.html
+|   |   success.html
+|   |   upload.html
+|   |   
+|   \---_components
+|           footer.html
+|           head.html
+|           navbar.html
+|           README.md
+|           scripts.html
+|           
++---uploads
++---venv
+(I skipped the content of venv in this tree view because it is irrelevant to see its content. this is just the virtual environment)

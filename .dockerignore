@@ -1,0 +1,33 @@
+# Virtual environment
+venv/
+env/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Development files
+.git/
+.gitignore
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+# Documentation
+tree.txt
+*.md
+!README.md
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Upload folder contents (will be created at runtime)
+uploads/*
+!uploads/.gitkeep

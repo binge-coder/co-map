@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, send_from_directory
 import pandas as pd
 import os
 from fpdf import FPDF
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend for Docker
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
@@ -478,5 +480,6 @@ def generate_report():
     
 if __name__ == '__main__':
     import os
-    port = int(os.environ.get('PORT', 5000))
+    # Use port 7860 for Hugging Face Spaces, fallback to PORT env var or 5000
+    port = int(os.environ.get('PORT', 7860))
     app.run(host='0.0.0.0', port=port, debug=False)
