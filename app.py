@@ -2,14 +2,13 @@ from flask import Flask, render_template, request, redirect, send_from_directory
 import pandas as pd
 import os
 from fpdf import FPDF
-import matplotlib
-matplotlib.use('Agg')  # Use non-interactive backend for Docker
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 from scipy.stats import norm
 from flask import jsonify
 from report_generator import ReportGenerator
+from combine_marks import process_student_marks
 
 app = Flask(__name__)
 app.secret_key = 'secret'  # Needed for session
@@ -22,7 +21,8 @@ if not os.path.exists(UPLOAD_FOLDER):
 @app.route('/')
 def home():
     config_exists = os.path.exists(os.path.join(UPLOAD_FOLDER, 'co_config.xlsx'))
-    return render_template('home.html', config_exists=config_exists)
+    mapping_exists = os.path.exists(os.path.join(UPLOAD_FOLDER, 'co_po_mapping_matrix.xlsx'))
+    return render_template('home.html', config_exists=config_exists, mapping_exists=mapping_exists)
 
 @app.route('/minor1')
 def minor1():
@@ -76,6 +76,8 @@ def manual_entry(exam):
     return render_template('manual_entry.html', exam=exam, now=datetime.now())
 
 
+from combine_marks import process_student_marks  # ✅ At top of app.py
+
 @app.route('/upload/<exam>', methods=['POST'])
 def upload_file(exam):
     file = request.files['file']
@@ -90,8 +92,21 @@ def upload_file(exam):
 
         generate_bell_curve(filepath, exam)
 
-        return render_template('display.html', table=table_html, filename=filename, exam=exam, preview_mode=True, uploaded=True)
+        # ✅ Generate Bloom's pie chart for question papers
+        if exam in ['m1_question_paper', 'm2_question_paper', 'final_question_paper']:
+            generate_blooms_pie_chart(filepath, exam)
 
+        # ✅ Trigger student_marks.xlsx generation after assignment upload
+        if exam == 'assignment':
+            success, result = process_student_marks()
+            if not success:
+                return f"<h3 class='text-danger'>Error: {result}</h3>"
+            print("✅ student_marks.xlsx generated.")
+
+            # ✅ Also generate bell curve for the combined marks
+            generate_bell_curve(os.path.join(app.config['UPLOAD_FOLDER'], 'students_marks.xlsx'), 'students_marks')
+
+        return render_template('display.html', table=table_html, filename=filename, exam=exam, preview_mode=True, uploaded=True)
 
 @app.route('/submit/<exam>', methods=['POST'])
 def submit_uploaded(exam):
@@ -114,7 +129,37 @@ def m2_question_paper():
 
 @app.route('/final-question-paper', methods=['GET', 'POST'])
 def final_question_paper():
-    return handle_question_paper('final_question_paper', next_url='/minor1')
+    if request.method == 'POST':
+        # Handle the question paper submission first
+        row_count = int(request.form.get('row_count', 0))
+        data = []
+        for i in range(1, row_count + 1):
+            row = [request.form.get(f'{field}_{i}') for field in
+                   ["qno", "question", "marks", "co", "bloom"]]
+            data.append(row)
+
+        df = pd.DataFrame(data, columns=["Question Number", "Question", "Marks", "CO", "Bloom's Taxonomy"])
+        filepath = os.path.join(UPLOAD_FOLDER, f"final_question_paper.xlsx")
+        df.to_excel(filepath, index=False)
+        
+        # Generate all 3 Bloom's pie charts after final question paper submission
+        question_papers = [
+            ('m1_question_paper', 'M1 Question Paper'),
+            ('m2_question_paper', 'M2 Question Paper'), 
+            ('final_question_paper', 'Final Question Paper')
+        ]
+        
+        for paper_name, display_name in question_papers:
+            paper_filepath = os.path.join(UPLOAD_FOLDER, f"{paper_name}.xlsx")
+            if os.path.exists(paper_filepath):
+                generate_blooms_pie_chart(paper_filepath, paper_name)
+                print(f"✅ Generated Bloom's pie chart for {display_name}")
+            else:
+                print(f"⚠️ File not found: {paper_filepath}")
+        
+        return redirect('/minor1')
+    else:
+        return render_template('question_paper.html', paper='final_question_paper')
 
 def handle_question_paper(name, next_url):
     if request.method == 'POST':
@@ -128,6 +173,7 @@ def handle_question_paper(name, next_url):
         df = pd.DataFrame(data, columns=["Question Number", "Question", "Marks", "CO", "Bloom's Taxonomy"])
         filepath = os.path.join(UPLOAD_FOLDER, f"{name}.xlsx")
         df.to_excel(filepath, index=False)
+       
         return redirect(next_url)
 
     return render_template('question_paper.html', paper=name)
@@ -477,9 +523,38 @@ def generate_report():
     except Exception as e:
         return f"<h4 class='text-danger'>Error generating report: {str(e)}</h4>"
     
+def generate_blooms_pie_chart(file_path, output_name):
+    try:
+        df = pd.read_excel(file_path)
+        if "Bloom's Taxonomy" not in df.columns:
+            print(f"'Bloom's Taxonomy' column missing in {output_name}")
+            return
+
+        blooms_data = df["Bloom's Taxonomy"].dropna().value_counts()
+        
+        if blooms_data.empty:
+            print(f"No Bloom's taxonomy data found in {output_name}")
+            return
+
+        # Plotting
+        plt.figure(figsize=(8, 8))
+        plt.pie(blooms_data, labels=blooms_data.index, autopct='%1.1f%%',
+                colors=plt.cm.Dark2.colors, startangle=140, textprops={'fontsize': 12})
+        plt.title(f"{output_name.replace('_', ' ').replace('-', ' ').title()} - Bloom's Taxonomy Distribution", fontsize=14)
+
+        # Ensure output goes to uploads folder
+        chart_path = os.path.join(UPLOAD_FOLDER, f"{output_name}_blooms_pie.png")
+        plt.tight_layout()
+        plt.savefig(chart_path, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        print(f"✅ Bloom's pie chart saved: {chart_path}")
+
+    except Exception as e:
+        print(f"Error generating Bloom's pie chart for {output_name}: {e}")
+    
     
 if __name__ == '__main__':
     import os
-    # Use port 7860 for Hugging Face Spaces, fallback to PORT env var or 5000
-    port = int(os.environ.get('PORT', 7860))
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)

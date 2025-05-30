@@ -1,8 +1,8 @@
 ---
-title: CO Mapping and Attainment System
-emoji: 📊
+title: Co Po Map
+emoji: 📉
 colorFrom: blue
-colorTo: green
+colorTo: pink
 sdk: docker
 pinned: false
 ---

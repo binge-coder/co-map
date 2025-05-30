@@ -40,4 +40,4 @@ ENV PYTHONUNBUFFERED=1
 ENV PORT=7860
 
 # Run the application
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "app:app"]

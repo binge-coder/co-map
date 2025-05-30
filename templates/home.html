@@ -770,8 +770,6 @@
             </div>
             <div class="action-buttons">
                 <a href="/m1-question-paper" class="btn action-btn primary-btn"> 
-                    <!-- <a href="{{ url_for('minor1') }}" class="btn action-btn primary-btn"> -->
-
                     <div class="btn-content">
                         <div class="btn-icon">
                             <i class="fas fa-arrow-right"></i>
@@ -789,8 +787,6 @@
                         <span>VIEW CO ATTAINMENT</span>
                     </div>
                 </a>
-                {% endif %}
-
                 <a href="/co-po-pso-mapping" class="btn action-btn quaternary-btn">
                     <div class="btn-content">
                         <div class="btn-icon">
@@ -799,8 +795,9 @@
                         <span>CO-PO-PSO MAPPING</span>
                     </div>
                 </a>
+                {% endif %}
 
-                {% if config_exists %}
+                {% if mapping_exists %}
                 <a href="/generate-report" class="btn action-btn tertiary-btn" id="generateReportBtn">
                     <div class="btn-content">
                         <div class="btn-icon">

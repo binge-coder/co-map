@@ -31,6 +31,10 @@ class ReportGenerator:
         self.process_exam("Sessional 2", "m2_question_paper.xlsx", "minor2.xlsx", "minor2_bell.png")
         self.process_exam("Final Exam", "final_question_paper.xlsx", "final.xlsx", "final_bell.png")
         
+        # Add new sections for overall student marks and bell curve
+        self.add_students_overall_marks_page()
+        self.add_students_overall_bell_curve_page()
+        
         # Add CO attainment tables after final exam
         self.add_co_attainment_tables()
 
@@ -79,12 +83,25 @@ class ReportGenerator:
         marks_path = os.path.join(self.upload_folder, marks_file)
         bell_curve_path = os.path.join(self.upload_folder, bell_curve_file)
         
+        # Define Bloom's taxonomy chart file based on exam type
+        blooms_chart_file = ""
+        if "Sessional 1" in exam_name:
+            blooms_chart_file = "m1_question_paper_blooms_pie.png"
+        elif "Sessional 2" in exam_name:
+            blooms_chart_file = "m2_question_paper_blooms_pie.png"
+        elif "Final Exam" in exam_name:
+            blooms_chart_file = "final_question_paper_blooms_pie.png"
+        
         if not all(os.path.exists(path) for path in [question_paper_path, marks_path, bell_curve_path]):
             self.add_missing_files_page(exam_name, question_paper_file, marks_file, bell_curve_file)
             return
         
         # Add question paper
         self.add_question_paper_page(exam_name, question_paper_path)
+        
+        # Add Bloom's taxonomy distribution chart after question paper
+        if blooms_chart_file:
+            self.add_blooms_taxonomy_page(exam_name, blooms_chart_file)
         
         # Add marks table
         self.add_marks_page(exam_name, marks_path)
@@ -418,6 +435,193 @@ class ReportGenerator:
             self.pdf.cell(0, 15, f"{exam_name} - Score Distribution", ln=True, align="C")
             self.pdf.set_font("Arial", "", 12)
             self.pdf.cell(0, 10, f"Error adding bell curve: {str(e)}", ln=True)
+    
+    def add_blooms_taxonomy_page(self, exam_name, blooms_chart_file):
+        """Add Bloom's taxonomy distribution chart to the report."""
+        blooms_chart_path = os.path.join(self.upload_folder, blooms_chart_file)
+        
+        if not os.path.exists(blooms_chart_path):
+            self._add_missing_file_page(f"{exam_name} - Bloom's Taxonomy Distribution", blooms_chart_file)
+            return
+        
+        try:
+            self.pdf.add_page()
+            self.pdf.set_font("Arial", "B", 16)
+            self.pdf.cell(0, 15, f"{exam_name} - Bloom's Taxonomy Distribution", ln=True, align="C")
+            
+            # Add description
+            self.pdf.set_font("Arial", "I", 10)
+            self.pdf.cell(0, 10, "Distribution of questions across Bloom's Taxonomy levels", ln=True)
+            
+            # Calculate optimal image placement
+            page_width = self.pdf.w - 2 * self.pdf.l_margin
+            image_width = page_width * 0.9  # 90% of page width
+            
+            # Add the image
+            self.pdf.image(
+                blooms_chart_path, 
+                x=self.pdf.l_margin + (page_width - image_width) / 2, 
+                y=self.pdf.get_y() + 5,
+                w=image_width
+            )
+        
+        except Exception as e:
+            self.pdf.add_page()
+            self.pdf.set_font("Arial", "B", 16) 
+            self.pdf.cell(0, 15, f"{exam_name} - Bloom's Taxonomy Distribution", ln=True, align="C")
+            self.pdf.set_font("Arial", "", 12)
+            self.pdf.cell(0, 10, f"Error adding Bloom's taxonomy chart: {str(e)}", ln=True)
+    
+    def add_students_overall_marks_page(self):
+        """Add students overall marks to the report."""
+        students_marks_path = os.path.join(self.upload_folder, "students_marks.xlsx")
+        
+        if not os.path.exists(students_marks_path):
+            self._add_missing_file_page("Students Overall Marks", "students_marks.xlsx")
+            return
+        
+        try:
+            # Read the Excel file
+            df = pd.read_excel(students_marks_path)
+            
+            # Create a new page for overall marks
+            self.pdf.add_page()
+            self.pdf.set_font("Arial", "B", 16)
+            self.pdf.cell(0, 15, "Students Overall Marks", ln=True, align="C")
+            
+            # Find the Total column
+            total_column = None
+            possible_total_names = ['Total', 'Total Marks', 'Grand Total', 'Final Score', 'Overall Total']
+            
+            for col_name in possible_total_names:
+                if col_name in df.columns:
+                    total_column = col_name
+                    break
+            
+            # Add summary statistics if Total column exists
+            if total_column:
+                self.pdf.set_font("Arial", "I", 10)
+                total_marks = df[total_column].dropna()
+                stats_text = (
+                    f"Number of Students: {len(total_marks)}, "
+                    f"Average: {total_marks.mean():.2f}, "
+                    f"Highest: {total_marks.max():.2f}, "
+                    f"Lowest: {total_marks.min():.2f}"
+                )
+                self.pdf.cell(0, 10, stats_text, ln=True)
+            
+            # Simplify column selection: take first 3 columns for student info + total column if found
+            student_columns = df.columns[:3].tolist()
+            column_headers = ["S.No", "Roll No.", "Student Name"]  # Fixed headers for first 3 columns
+            
+            # Add the total column if found
+            if total_column:
+                student_columns.append(total_column)
+                column_headers.append("Overall Total")
+            
+            filtered_df = df[student_columns]
+                
+            # Define fixed column widths
+            col_widths = [20, 40, 80, 30]  # S.No, Roll No., Student Name, Overall Total
+            
+            # Get total width of the table
+            total_width = sum(col_widths[:len(column_headers)])
+            
+            # Calculate centering offset (to center the table on page)
+            page_width = self.pdf.w - 2 * self.pdf.l_margin
+            left_margin = self.pdf.l_margin + (page_width - total_width) / 2
+            
+            # Fixed number of students per page
+            students_per_first_page = 29
+            students_per_other_page = 30
+            
+            # Set up pagination variables
+            total_students = len(filtered_df)
+            current_student = 0
+            first_page = True
+            
+            while current_student < total_students:
+                # If not on the first iteration and we've filled a page, add a new page
+                if current_student > 0:
+                    self.pdf.add_page()
+                    self.pdf.set_font("Arial", "B", 16)
+                    self.pdf.cell(0, 15, "Students Overall Marks (Continued)", ln=True, align="C")
+                    first_page = False
+                
+                # Determine how many students to show on this page
+                students_this_page = students_per_first_page if first_page else students_per_other_page
+                end_student = min(current_student + students_this_page, total_students)
+                
+                # Draw header
+                self.pdf.set_font("Arial", "B", 9)
+                self.pdf.set_fill_color(200, 220, 255)
+                
+                # Set position to center the table
+                self.pdf.set_x(left_margin)
+                
+                # Draw the header row
+                for i, header in enumerate(column_headers):
+                    self.pdf.cell(col_widths[i], 10, str(header), border=1, fill=True, align="C")
+                self.pdf.ln()
+                
+                # Draw data rows
+                self.pdf.set_font("Arial", "", 8)
+                for i in range(current_student, end_student):
+                    # Center the row
+                    self.pdf.set_x(left_margin)
+                    
+                    row = filtered_df.iloc[i]
+                    for j, col in enumerate(filtered_df.columns):
+                        value = str(row[col]) if pd.notna(row[col]) else ""
+                        # Center align all cells
+                        self.pdf.cell(col_widths[j], 8, value, border=1, align="C")
+                    self.pdf.ln()
+                                            
+                # Move to next batch
+                current_student = end_student
+        
+        except Exception as e:
+            self.pdf.add_page() 
+            self.pdf.set_font("Arial", "B", 16)
+            self.pdf.cell(0, 15, "Students Overall Marks", ln=True, align="C")
+            self.pdf.set_font("Arial", "", 12)
+            self.pdf.cell(0, 10, f"Error processing overall marks: {str(e)}", ln=True)
+    
+    def add_students_overall_bell_curve_page(self):
+        """Add students overall marks bell curve to the report."""
+        bell_curve_path = os.path.join(self.upload_folder, "students_marks_bell.png")
+        
+        if not os.path.exists(bell_curve_path):
+            self._add_missing_file_page("Students Overall Bell Curve", "students_marks_bell.png")
+            return
+        
+        try:
+            self.pdf.add_page()
+            self.pdf.set_font("Arial", "B", 16)
+            self.pdf.cell(0, 15, "Students Overall Marks - Score Distribution", ln=True, align="C")
+            
+            # Add description
+            self.pdf.set_font("Arial", "I", 10)
+            self.pdf.cell(0, 10, "Statistical distribution of overall student scores", ln=True)
+            
+            # Calculate optimal image placement
+            page_width = self.pdf.w - 2 * self.pdf.l_margin
+            image_width = page_width * 0.9  # 90% of page width
+            
+            # Add the image
+            self.pdf.image(
+                bell_curve_path,
+                x=self.pdf.l_margin + (page_width - image_width) / 2,
+                y=self.pdf.get_y() + 5,
+                w=image_width
+            )
+        
+        except Exception as e:
+            self.pdf.add_page()
+            self.pdf.set_font("Arial", "B", 16)
+            self.pdf.cell(0, 15, "Students Overall Marks - Score Distribution", ln=True, align="C")
+            self.pdf.set_font("Arial", "", 12)
+            self.pdf.cell(0, 10, f"Error adding overall bell curve: {str(e)}", ln=True)
     
     def add_attainment_charts_page(self):
         """Add both attainment charts to a single page in the report."""
