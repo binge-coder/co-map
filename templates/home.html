@@ -758,6 +758,8 @@
         </div>
     </section>
 
+    
+
     <!-- Action Buttons -->
     <section class="action-section" id="get-started">
         <div class="text-center">
@@ -798,7 +800,7 @@
                 {% endif %}
 
                 {% if mapping_exists %}
-                <a href="/generate-report" class="btn action-btn tertiary-btn" id="generateReportBtn">
+                <a href="/report-details" class="btn action-btn tertiary-btn" id="generateReportBtn">
                     <div class="btn-content">
                         <div class="btn-icon">
                             <i class="fas fa-file-pdf"></i>
@@ -869,28 +871,9 @@
         </div>
     </section>
 
-    <div id="loadingSpinner" style="display: none;">
-        <div class="spinner-wrapper">
-            <div class="spinner-border text-info mb-4" role="status" style="width: 4rem; height: 4rem;">
-                <span class="visually-hidden">Generating report...</span>
-            </div>
-            <p class="mb-0">Generating comprehensive report, please wait...</p>
-        </div>
-    </div>
 </div>
 {% endblock %}
 
 {% block additional_scripts %}
-<script>
-    // Loading spinner for report generation
-    document.getElementById("generateReportBtn") && document.getElementById("generateReportBtn").addEventListener("click", function () {
-        window.addEventListener('beforeunload', function () {
-            document.getElementById("loadingSpinner").style.display = "flex";
-        });
-    });
 
-    window.addEventListener('load', function () {
-        document.getElementById("loadingSpinner").style.display = "none";
-    });
-</script>
 {% endblock %}

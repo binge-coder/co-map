@@ -1,0 +1,199 @@
+{% extends "layout.html" %}
+
+{% block title %}Report Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0 rounded-4 bg-dark text-white">
+                <div class="card-header text-white text-center py-4 rounded-top-4" style="background: linear-gradient(135deg, #2d2a55, #1f1f1f);">
+                    <h2 class="mb-0 fw-bold">
+                        <i class="fas fa-file-alt me-2"></i>
+                        Enter Report Metadata
+                    </h2>
+                    <p class="mb-0 mt-2 opacity-75">Please fill in all the required details</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="professor" class="form-label text-white">
+                                    <i class="fas fa-user-tie me-2 text-primary"></i>
+                                    Name of Professor
+                                </label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary" 
+                                       name="professor" required 
+                                       placeholder="Enter professor's name">
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="department" class="form-label text-white">
+                                    <i class="fas fa-building me-2 text-success"></i>
+                                    Department
+                                </label>
+                                <select class="form-select bg-dark text-white border-secondary" 
+                                        name="department" required>
+                                    <option value="" class="text-dark">Select Department</option>
+                                    <option value="CSE">Computer Science & Engineering</option>
+                                    <option value="ECE">Electronics & Communication</option>
+                                    <option value="CIVIL">Civil Engineering</option>
+                                    <option value="MECH">Mechanical Engineering</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="year" class="form-label text-white">
+                                    <i class="fas fa-calendar-alt me-2 text-warning"></i>
+                                    Academic Year
+                                </label>
+                                <select class="form-select bg-dark text-white border-secondary" 
+                                        name="year" required>
+                                    {% for yr in ['2020-2021','2021-2022','2022-2023','2023-2024','2024-2025','2025-2026'] %}
+                                    <option value="{{ yr }}">{{ yr }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="semester" class="form-label text-white">
+                                    <i class="fas fa-list-ol me-2 text-info"></i>
+                                    Semester
+                                </label>
+                                <select class="form-select bg-dark text-white border-secondary" 
+                                        name="semester" required>
+                                    {% for sem in range(1, 9) %}
+                                    <option value="{{ sem }}">{{ sem }} Semester</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="subject" class="form-label text-white">
+                                    <i class="fas fa-book me-2 text-danger"></i>
+                                    Subject Name
+                                </label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary" 
+                                       name="subject" required 
+                                       placeholder="Enter subject name">
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="course_code" class="form-label text-white">
+                                    <i class="fas fa-code me-2 text-secondary"></i>
+                                    Course Code
+                                </label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary" 
+                                       name="course_code" required 
+                                       placeholder="e.g., CSE101">
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-lg px-5 py-3 rounded-pill fw-bold text-white border-0" 
+                                    style="background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);">
+                                <i class="fas fa-rocket me-2"></i>
+                                Submit and Generate Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" style="display: none;">
+    <div class="spinner-wrapper">
+        <div class="spinner-border text-light mb-4" role="status" style="width: 4rem; height: 4rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mb-0 text-white">Generating comprehensive report, please wait...</p>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #121212, #1f1f1f);
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #6a11cb !important;
+        box-shadow: 0 0 0 0.2rem rgba(106, 17, 203, 0.25) !important;
+    }
+
+    .form-control:hover, .form-select:hover {
+        border-color: #444;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(106, 17, 203, 0.5);
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        font-size: 1rem;
+    }
+
+    .card {
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #loadingSpinner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
+    }
+
+    .spinner-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #1c1c1c;
+        padding: 2rem 3rem;
+        border-radius: 12px;
+        border: 1px solid #444;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    }
+</style>
+
+<script>
+    document.querySelector("form")?.addEventListener("submit", function () {
+        document.getElementById("loadingSpinner").style.display = "flex";
+    });
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

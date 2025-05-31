@@ -522,7 +522,37 @@ def generate_report():
         return redirect(url_for('download', filename=report_filename))
     except Exception as e:
         return f"<h4 class='text-danger'>Error generating report: {str(e)}</h4>"
-    
+
+@app.route('/report-details', methods=['GET', 'POST'])
+def report_details():
+    if request.method == 'POST':
+        professor = request.form.get('professor')
+        department = request.form.get('department')
+        year = request.form.get('year')
+        semester = request.form.get('semester')
+        subject = request.form.get('subject')
+        course_code = request.form.get('course_code')
+
+        # Save to Excel
+        data = {
+            'Professor': [professor],
+            'Department': [department],
+            'Academic Year': [year],
+            'Semester': [semester],
+            'Subject Name': [subject],
+            'Course Code': [course_code]
+        }
+
+        df = pd.DataFrame(data)
+        df.to_excel(os.path.join(UPLOAD_FOLDER, 'report_metadata.xlsx'), index=False)
+
+        # Proceed to generate report
+        return redirect('/generate-report')
+
+    return render_template('report_details_form.html')
+
+
+   
 def generate_blooms_pie_chart(file_path, output_name):
     try:
         df = pd.read_excel(file_path)

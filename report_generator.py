@@ -51,29 +51,160 @@ class ReportGenerator:
         return report_filename
     
     def add_cover_page(self):
-        """Add a cover page to the report."""
+        """Add a professional cover page to the report with metadata from Excel file."""
         self.pdf.add_page()
-        self.pdf.set_font("Arial", "B", 24)
         
-        # Add title
-        self.pdf.cell(0, 60, "", ln=True)
-        self.pdf.cell(0, 20, "Comprehensive Course Assessment Report", ln=True, align="C")
-        
-        # Add subtitle
-        self.pdf.set_font("Arial", "I", 16)
-        self.pdf.cell(0, 15, "CO Attainment Analysis", ln=True, align="C")
-        
-        # Add date
-        self.pdf.set_font("Arial", "", 12)
-        self.pdf.cell(0, 30, "", ln=True)
-        self.pdf.cell(0, 10, f"Generated on: {datetime.now().strftime('%B %d, %Y')}", ln=True, align="C")
-        
-        # Add footer note
-        self.pdf.set_y(-40)
+        # Try to read metadata from Excel file
+        metadata = {}
+        try:
+            metadata_path = os.path.join(self.upload_folder, "report_metadata.xlsx")
+            if os.path.exists(metadata_path):
+                df_metadata = pd.read_excel(metadata_path)
+                if not df_metadata.empty:
+                    row = df_metadata.iloc[0]
+                    metadata = {
+                        'professor': str(row.get('Professor', 'N/A')),
+                        'department': str(row.get('Department', 'N/A')),
+                        'academic_year': str(row.get('Academic Year', 'N/A')),
+                        'semester': str(row.get('Semester', 'N/A')),
+                        'subject_name': str(row.get('Subject Name', 'N/A')),
+                        'course_code': str(row.get('Course Code', 'N/A'))
+                    }
+        except Exception as e:
+            print(f"Warning: Could not read metadata file: {e}")
+            metadata = {
+                'professor': 'N/A',
+                'department': 'N/A',
+                'academic_year': 'N/A',
+                'semester': 'N/A',
+                'subject_name': 'N/A',
+                'course_code': 'N/A'
+            }
+
+        # === HEADER SECTION ===
+        self.pdf.set_font("Arial", "B", 18)
+        self.pdf.cell(0, 20, "", ln=True)
+        self.pdf.set_text_color(0, 51, 102)
+        self.pdf.cell(0, 10, "CHANDIGARH COLLEGE OF ENGINEERING AND", ln=True, align="C")
+        self.pdf.cell(0, 10, "TECHNOLOGY DEGREE WING (CCET)", ln=True, align="C")
+        self.pdf.set_text_color(0, 0, 0)
+        self.pdf.cell(0, 8, "", ln=True)
+
+        self.pdf.set_line_width(0.8)
+        self.pdf.line(40, self.pdf.get_y(), 170, self.pdf.get_y())
+        self.pdf.set_line_width(0.3)
+        self.pdf.line(40, self.pdf.get_y() + 2, 170, self.pdf.get_y() + 2)
+
+        # === TITLE SECTION ===
+        self.pdf.cell(0, 15, "", ln=True)
+        self.pdf.set_font("Arial", "B", 22)
+        self.pdf.set_text_color(139, 0, 0)
+        self.pdf.cell(0, 12, "COMPREHENSIVE COURSE", ln=True, align="C")
+        self.pdf.cell(0, 12, "ASSESSMENT REPORT", ln=True, align="C")
+
+        self.pdf.set_text_color(64, 64, 64)
+        self.pdf.set_font("Arial", "I", 14)
+        self.pdf.cell(0, 8, "", ln=True)
+        self.pdf.cell(0, 8, "CO Attainment Analysis & Statistical Evaluation", ln=True, align="C")
+        self.pdf.set_text_color(0, 0, 0)
+
+        # === COURSE INFORMATION BOX ===
+        self.pdf.cell(0, 20, "", ln=True)
+        box_x = 30
+        box_y = self.pdf.get_y()
+        box_width = 150
+        box_height = 75
+        self.pdf.set_fill_color(245, 245, 245)
+        self.pdf.rect(box_x + 1, box_y + 1, box_width, box_height, 'F')
+        self.pdf.set_fill_color(255, 255, 255)
+        self.pdf.rect(box_x, box_y, box_width, box_height, 'DF')
+
+        self.pdf.set_fill_color(0, 51, 102)
+        self.pdf.rect(box_x, box_y, box_width, 15, 'F')
+        self.pdf.set_font("Arial", "B", 12)
+        self.pdf.set_text_color(255, 255, 255)
+        self.pdf.set_xy(box_x, box_y + 4)
+        self.pdf.cell(box_width, 8, "COURSE INFORMATION", 0, 0, "C")
+        self.pdf.set_text_color(0, 0, 0)
+
+        self.pdf.set_font("Arial", "", 11)
+        current_y = box_y + 22
+        left_margin = box_x + 10
+
+        def add_info_row(label, value, y_pos):
+            self.pdf.set_xy(left_margin, y_pos)
+            self.pdf.set_font("Arial", "B", 10)
+            self.pdf.cell(40, 6, f"{label}:", 0, 0, "L")
+            self.pdf.set_font("Arial", "", 10)
+            self.pdf.cell(0, 6, str(value), 0, 0, "L")
+            return y_pos + 8
+
+        current_y = add_info_row("Course Code", metadata['course_code'], current_y)
+        current_y = add_info_row("Subject Name", metadata['subject_name'], current_y)
+        current_y = add_info_row("Department", metadata['department'], current_y)
+        current_y = add_info_row("Academic Year", metadata['academic_year'], current_y)
+        current_y = add_info_row("Semester", metadata['semester'], current_y)
+
+        # === FACULTY BOX ===
+        self.pdf.set_y(box_y + box_height + 12)
+        faculty_box_x = 40
+        faculty_box_y = self.pdf.get_y()
+        faculty_box_width = 130
+        faculty_box_height = 35
+
+        self.pdf.set_fill_color(245, 245, 245)
+        self.pdf.rect(faculty_box_x + 1, faculty_box_y + 1, faculty_box_width, faculty_box_height, 'F')
+        self.pdf.set_fill_color(248, 248, 255)
+        self.pdf.rect(faculty_box_x, faculty_box_y, faculty_box_width, faculty_box_height, 'DF')
+        self.pdf.set_fill_color(0, 51, 102)
+        self.pdf.rect(faculty_box_x, faculty_box_y, faculty_box_width, 12, 'F')
+
+        self.pdf.set_font("Arial", "B", 11)
+        self.pdf.set_text_color(255, 255, 255)
+        self.pdf.set_xy(faculty_box_x, faculty_box_y + 3)
+        self.pdf.cell(faculty_box_width, 6, "FACULTY IN-CHARGE", 0, 0, "C")
+
+        self.pdf.set_xy(faculty_box_x, faculty_box_y + 18)
+        self.pdf.set_font("Arial", "B", 12)
+        self.pdf.set_text_color(139, 0, 0)
+
+        faculty_name = metadata['professor']
+        if len(faculty_name) > 25:
+            words = faculty_name.split()
+            if len(words) > 1:
+                mid = len(words) // 2
+                line1 = " ".join(words[:mid])
+                line2 = " ".join(words[mid:])
+                self.pdf.cell(faculty_box_width, 6, line1, 0, 0, "C")
+                self.pdf.set_xy(faculty_box_x, faculty_box_y + 24)
+                self.pdf.cell(faculty_box_width, 6, line2, 0, 0, "C")
+            else:
+                self.pdf.cell(faculty_box_width, 8, faculty_name, 0, 0, "C")
+        else:
+            self.pdf.cell(faculty_box_width, 8, faculty_name, 0, 0, "C")
+
+        # === REPORT GENERATION INFO ===
+        self.pdf.set_y(faculty_box_y + faculty_box_height + 15)
         self.pdf.set_font("Arial", "I", 10)
-        self.pdf.cell(0, 10, "This report includes question papers, student marks, and statistical analysis", align="C")
-        self.pdf.set_y(-30)
-        self.pdf.cell(0, 10, "for all examination components of the course.", align="C")
+        self.pdf.set_text_color(64, 64, 64)
+        report_date = datetime.now().strftime('%B %d, %Y at %I:%M %p')
+        self.pdf.cell(0, 6, f"Report Generated: {report_date}", ln=True, align="C")
+
+        # === FOOTER ===
+        self.pdf.set_y(-60)
+        self.pdf.set_line_width(0.5)
+        self.pdf.set_draw_color(0, 51, 102)
+        self.pdf.line(60, self.pdf.get_y(), 150, self.pdf.get_y())
+        self.pdf.cell(0, 10, "", ln=True)
+        
+        self.pdf.cell(0, 8, "", ln=True)
+        self.pdf.set_line_width(0.3)
+        self.pdf.set_draw_color(139, 0, 0)
+        self.pdf.line(70, self.pdf.get_y(), 140, self.pdf.get_y())
+
+        self.pdf.set_text_color(0, 0, 0)
+        self.pdf.set_draw_color(0, 0, 0)
+        self.pdf.set_fill_color(255, 255, 255)
 
     # Fixed indentation for process_exam method
     def process_exam(self, exam_name, question_paper_file, marks_file, bell_curve_file):
